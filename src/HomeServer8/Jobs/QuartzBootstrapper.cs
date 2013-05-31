@@ -1,10 +1,10 @@
-﻿using HomeServer8.Server.Hubs;
+﻿using HomeServer8.Server.Messaging.Hubs;
 using Nancy.TinyIoc;
 using Quartz;
 using Quartz.Impl;
 using System;
 
-namespace HomeServer8.Server.Bootstrappers
+namespace HomeServer8.Server.Jobs
 {
     public class QuartzBootstrapper : IDisposable
     {

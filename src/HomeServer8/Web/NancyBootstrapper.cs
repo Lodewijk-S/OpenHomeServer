@@ -2,13 +2,13 @@
 using Nancy.Bootstrapper;
 using Nancy.ViewEngines;
 
-namespace HomeServer8.Server.Bootstrappers
+namespace HomeServer8.Server.Web
 {
     public class NancyBootstrapper : DefaultNancyBootstrapper
     {
         public NancyBootstrapper()
         {
-            ResourceViewLocationProvider.RootNamespaces.Add(GetType().Assembly, "HomeServer8.Server.Views");
+            ResourceViewLocationProvider.RootNamespaces.Add(GetType().Assembly, "HomeServer8.Server.Web.Views");
         }
 
         protected override NancyInternalConfiguration InternalConfiguration

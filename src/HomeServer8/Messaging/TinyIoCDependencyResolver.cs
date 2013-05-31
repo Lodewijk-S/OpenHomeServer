@@ -3,10 +3,8 @@ using Nancy.TinyIoc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace HomeServer8.Server.Infrastructure
+namespace HomeServer8.Server.Messaging
 {
     public class TinyIoCDependencyResolver : DefaultDependencyResolver
     {

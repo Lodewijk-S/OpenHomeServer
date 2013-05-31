@@ -1,12 +1,7 @@
-﻿using HomeServer8.Server.Providers;
+﻿using HomeServer8.Server.Web.Providers;
 using Nancy;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace HomeServer8.Server.Modules
+namespace HomeServer8.Server.Web.Modules
 {
     public class HomeModule : NancyModule
     {

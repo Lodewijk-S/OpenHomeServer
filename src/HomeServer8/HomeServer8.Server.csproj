@@ -110,29 +110,29 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Bootstrappers\BootStrapper.cs" />
-    <Compile Include="Bootstrappers\NancyBootstrapper.cs" />
-    <Compile Include="Bootstrappers\QuartzBootstrapper.cs" />
-    <Compile Include="Bootstrappers\ServiceBootstrapper.cs" />
-    <Compile Include="Infrastructure\EmbeddedStaticContentConventionBuilder.cs" />
-    <Compile Include="Hubs\MessagingHub.cs" />
-    <Compile Include="Infrastructure\TinyIoCDependencyResolver.cs" />
-    <Compile Include="Modules\HomeModule.cs" />
+    <Compile Include="BootStrapper.cs" />
+    <Compile Include="Web\NancyBootstrapper.cs" />
+    <Compile Include="Jobs\QuartzBootstrapper.cs" />
+    <Compile Include="ServiceBootstrapper.cs" />
+    <Compile Include="Web\EmbeddedStaticContentConventionBuilder.cs" />
+    <Compile Include="Messaging\Hubs\MessagingHub.cs" />
+    <Compile Include="Messaging\TinyIoCDependencyResolver.cs" />
+    <Compile Include="Web\Modules\HomeModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Providers\ServerInfoProvider.cs" />
+    <Compile Include="Web\Providers\ServerInfoProvider.cs" />
     <Compile Include="SSDP\SSDPServer.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
-    <EmbeddedResource Include="Views\Home\index.cshtml" />
-    <EmbeddedResource Include="Views\layout.cshtml" />
-    <EmbeddedResource Include="Scripts\jquery-1.9.1.min.map" />
+    <EmbeddedResource Include="Web\Views\Home\index.cshtml" />
+    <EmbeddedResource Include="Web\Views\layout.cshtml" />
+    <EmbeddedResource Include="Web\Scripts\jquery-1.9.1.min.map" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Scripts\jquery-1.9.1.intellisense.js" />
-    <EmbeddedResource Include="Scripts\jquery-1.9.1.js" />
-    <EmbeddedResource Include="Scripts\jquery-1.9.1.min.js" />
+    <EmbeddedResource Include="Web\Scripts\jquery-1.9.1.intellisense.js" />
+    <EmbeddedResource Include="Web\Scripts\jquery-1.9.1.js" />
+    <EmbeddedResource Include="Web\Scripts\jquery-1.9.1.min.js" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.5">
@@ -152,9 +152,10 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Scripts\jquery.signalR-1.1.1.js" />
-    <EmbeddedResource Include="Scripts\jquery.signalR-1.1.1.min.js" />
+    <EmbeddedResource Include="Web\Scripts\jquery.signalR-1.1.1.js" />
+    <EmbeddedResource Include="Web\Scripts\jquery.signalR-1.1.1.min.js" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>

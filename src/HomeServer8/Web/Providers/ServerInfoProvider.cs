@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace HomeServer8.Server.Providers
+﻿namespace HomeServer8.Server.Web.Providers
 {
     public class ServerInfoProvider
     {

@@ -1,5 +1,6 @@
-﻿using HomeServer8.Server.Hubs;
-using HomeServer8.Server.Infrastructure;
+﻿using HomeServer8.Server.Jobs;
+using HomeServer8.Server.Messaging;
+using HomeServer8.Server.Messaging.Hubs;
 using Microsoft.AspNet.SignalR;
 using Microsoft.Owin.Hosting;
 using Owin;
