@@ -1,11 +1,18 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Express 2012 for Windows Desktop
+# Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HomeServer8.Server", "HomeServer8\HomeServer8.Server.csproj", "{735A9B9F-4F17-4C7B-A269-E6914E52C301}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HomeServer8.Client", "HomeServer8.Client\HomeServer8.Client.csproj", "{FB572B2A-80CC-4FD9-87D2-A844D57E95B8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HomeServer8.Tests", "HomeServer8.Tests\HomeServer8.Tests.csproj", "{E565A41F-A46E-47C4-9FB1-BF2B1053487B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{FC61098A-E42E-47B0-80F5-492AD282846B}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\NuGet.Config = .nuget\NuGet.Config
+		.nuget\NuGet.exe = .nuget\NuGet.exe
+		.nuget\NuGet.targets = .nuget\NuGet.targets
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
