@@ -7,12 +7,8 @@ namespace HomeServer8.Server.Bootstrappers
     {
         public static void Main(string[] args)
         {
-            IWindsorContainer _container = null;
-
-            try
+            using (var container = new WindsorContainer())
             {
-                _container = new WindsorContainer();
-
                 HostFactory.Run(x =>
                 {
                     x.SetServiceName("HomeServer8");
@@ -23,10 +19,6 @@ namespace HomeServer8.Server.Bootstrappers
 
                     x.Service<ServiceBootstrapper>();
                 });
-            }
-            finally
-            {
-                if (_container != null) _container.Dispose();
             }
         }        
     }
