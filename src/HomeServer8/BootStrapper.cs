@@ -37,8 +37,12 @@ namespace HomeServer8.Server.Bootstrappers
             container.Kernel.Resolver.AddSubResolver(new CollectionResolver(container.Kernel, true));
             container.Register(Component.For<IWindsorContainer>().Instance(container));
 
-            //Service Configuration
-
+            //Application parts
+            container.Register(
+                Component.For<ServiceBootstrapper>().ImplementedBy<ServiceBootstrapper>(),
+                Component.For<ISchedulerHost>().ImplementedBy<QuartzScheduler>(),
+                Component.For<IWebApplicationHost>().ImplementedBy<OwinWebApplicationHost>()
+            );
         }
     }
 }

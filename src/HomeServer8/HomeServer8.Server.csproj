@@ -111,6 +111,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BootStrapper.cs" />
+    <Compile Include="ISchedulerHost.cs" />
+    <Compile Include="IWebApplicationHost.cs" />
     <Compile Include="Web\NancyBootstrapper.cs" />
     <Compile Include="Jobs\QuartzBootstrapper.cs" />
     <Compile Include="ServiceBootstrapper.cs" />
