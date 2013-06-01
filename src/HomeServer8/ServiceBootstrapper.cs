@@ -21,8 +21,6 @@ namespace HomeServer8.Server.Bootstrappers
         {
             try
             {
-               
-
                 //_app = CreateOwinHost();
                 _scheduler = new QuartzBootstrapper();
 
