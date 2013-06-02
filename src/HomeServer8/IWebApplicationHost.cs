@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNet.SignalR;
+﻿using HomeServer8.Server.Messaging;
+using Microsoft.AspNet.SignalR;
 using Microsoft.Owin.Hosting;
 using Owin;
 using System;
@@ -8,12 +9,18 @@ namespace HomeServer8.Server
 {
     public interface IWebApplicationHost : IDisposable
     {
-        public void Start();
+        void Start();
     }
 
     public class OwinWebApplicationHost : IWebApplicationHost
     {
         IDisposable _host;
+        WindsorDependencyResolver _resolver;
+
+        public OwinWebApplicationHost(WindsorDependencyResolver resolver)
+        {
+            _resolver = resolver;
+        }
 
         public void Start()
         {
@@ -22,10 +29,10 @@ namespace HomeServer8.Server
                 var config = new HubConfiguration
                 {
                     EnableDetailedErrors = true,
-                    //Resolver = new TinyIoCDependencyResolver(TinyIoCContainer.Current)
+                    Resolver = _resolver
                 };
-                a.MapHubs(config);
-                a.UseNancy();
+                //a.MapHubs(config);
+                //a.UseNancy();
 
                 var addresses = a.Properties["host.Addresses"] as List<IDictionary<String, System.Object>>;
                 Console.WriteLine("Webserver started at port {0}", addresses[0]["port"]);

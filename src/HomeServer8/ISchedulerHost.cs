@@ -9,7 +9,7 @@ namespace HomeServer8.Server
 {
     public interface ISchedulerHost : IDisposable
     {
-        public void Start();
+        void Start();
     }
 
     public class QuartzScheduler : ISchedulerHost
@@ -21,6 +21,9 @@ namespace HomeServer8.Server
             var schedFact = new StdSchedulerFactory();
 
             _scheduler = schedFact.GetScheduler();
+
+            //todo: get the jobs from the container
+
             _scheduler.Start();
         }
 
