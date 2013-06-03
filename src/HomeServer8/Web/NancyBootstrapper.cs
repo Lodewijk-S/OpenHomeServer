@@ -26,7 +26,7 @@ namespace HomeServer8.Server.Web
             base.ConfigureConventions(conventions);
 
             conventions.StaticContentsConventions.Add(
-                Nancy.Embedded.Conventions.EmbeddedStaticContentConventionBuilder.AddDirectory("Scripts", this.GetType().Assembly)
+                Nancy.Embedded.Conventions.EmbeddedStaticContentConventionBuilder.AddDirectory("Scripts", this.GetType().Assembly, "Web\\Scripts")
             );
                        
         }
