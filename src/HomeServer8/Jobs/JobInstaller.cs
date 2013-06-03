@@ -1,10 +1,6 @@
 ﻿using Castle.MicroKernel.Registration;
 using Quartz;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Quartz.Spi;
 
 namespace HomeServer8.Server.Jobs
 {
@@ -13,6 +9,7 @@ namespace HomeServer8.Server.Jobs
         public void Install(Castle.Windsor.IWindsorContainer container, Castle.MicroKernel.SubSystems.Configuration.IConfigurationStore store)
         {
             container.Register(
+                Component.For<IJobFactory>().ImplementedBy<WindsorJobFactory>(),
                 Classes.FromThisAssembly().BasedOn<IJob>()
             );
         }

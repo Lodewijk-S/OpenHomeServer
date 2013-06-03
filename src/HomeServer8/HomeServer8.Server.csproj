@@ -120,6 +120,7 @@
     <Compile Include="IWebApplicationHost.cs" />
     <Compile Include="Jobs\JobInstaller.cs" />
     <Compile Include="Jobs\TestJob.cs" />
+    <Compile Include="Jobs\WindsorJobFactory.cs" />
     <Compile Include="Messaging\MessagingInstaller.cs" />
     <Compile Include="Web\NancyBootstrapper.cs" />
     <Compile Include="ServiceBootstrapper.cs" />

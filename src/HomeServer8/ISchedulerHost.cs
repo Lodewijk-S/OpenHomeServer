@@ -1,6 +1,7 @@
 ﻿using HomeServer8.Server.Jobs;
 using Quartz;
 using Quartz.Impl;
+using Quartz.Spi;
 using System;
 
 namespace HomeServer8.Server
@@ -13,25 +14,39 @@ namespace HomeServer8.Server
     public class QuartzScheduler : ISchedulerHost
     {
         IScheduler _scheduler;
+        IJobFactory _jobFactory;
+
+        public QuartzScheduler(IJobFactory jobFactory)
+        {
+            _jobFactory = jobFactory;
+        }
 
         public void Start()
         {
-            var schedFact = new StdSchedulerFactory();
+            try
+            {
+                var schedFact = new StdSchedulerFactory();
+                _scheduler = schedFact.GetScheduler();
+                _scheduler.JobFactory = _jobFactory;
 
-            _scheduler = schedFact.GetScheduler();
+                //todo: get the jobs from the container
+                var jobDetail = JobBuilder
+                    .Create<TestJob>()
+                    .Build();
 
-            //todo: get the jobs from the container
-            var jobDetail = JobBuilder
-                .Create<TestJob>()
-                .Build();
+                var trigger = TriggerBuilder
+                    .Create()
+                    .WithSimpleSchedule(a => a.WithIntervalInSeconds(1).RepeatForever())
+                    .StartNow()
+                    .Build();
 
-            var trigger = TriggerBuilder
-                .Create()
-                .WithSimpleSchedule(a => a.WithIntervalInSeconds(1).RepeatForever())
-                .StartNow()
-                .Build();
-
-            _scheduler.Start();
+                _scheduler.ScheduleJob(jobDetail, trigger);
+                _scheduler.Start();
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
         }
 
         public void Dispose()
