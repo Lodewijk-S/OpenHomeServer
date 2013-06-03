@@ -26,16 +26,23 @@ namespace HomeServer8.Server
         {
             _host = WebApplication.Start(8080, a =>
             {
-                var config = new HubConfiguration
+                try
                 {
-                    EnableDetailedErrors = true,
-                    Resolver = _resolver
-                };
-                a.MapHubs(config);
-                a.UseNancy();
+                    var config = new HubConfiguration
+                    {
+                        EnableDetailedErrors = true,
+                        Resolver = _resolver
+                    };
+                    a.MapHubs(config);
+                    a.UseNancy();
 
-                var addresses = a.Properties["host.Addresses"] as List<IDictionary<String, System.Object>>;
-                Console.WriteLine("Webserver started at port {0}", addresses[0]["port"]);
+                    var addresses = a.Properties["host.Addresses"] as List<IDictionary<String, System.Object>>;
+                    Console.WriteLine("Webserver started at port {0}", addresses[0]["port"]);
+                }
+                catch (Exception e)
+                {
+                    throw e;
+                }
             });
         }
 
