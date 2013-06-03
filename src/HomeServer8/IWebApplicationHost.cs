@@ -24,7 +24,12 @@ namespace HomeServer8.Server
 
         public void Start()
         {
-            _host = WebApplication.Start(8080, a =>
+            var startOptions = new StartOptions
+            {
+                Port = 8080
+            };
+
+            _host = WebApplication.Start(startOptions, a =>
             {
                 try
                 {
@@ -33,7 +38,12 @@ namespace HomeServer8.Server
                         EnableDetailedErrors = true,
                         Resolver = _resolver
                     };
+                    
+                    //SignalR
+                    a.Properties["host.AppName"] = "Homeserver8.Server"; //https://github.com/SignalR/SignalR/issues/1616
                     a.MapHubs(config);
+
+                    //Nancy
                     a.UseNancy();
 
                     var addresses = a.Properties["host.Addresses"] as List<IDictionary<String, System.Object>>;
