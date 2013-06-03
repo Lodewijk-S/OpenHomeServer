@@ -118,9 +118,10 @@
     <Compile Include="BootStrapper.cs" />
     <Compile Include="ISchedulerHost.cs" />
     <Compile Include="IWebApplicationHost.cs" />
+    <Compile Include="Jobs\JobInstaller.cs" />
+    <Compile Include="Jobs\TestJob.cs" />
     <Compile Include="Messaging\MessagingInstaller.cs" />
     <Compile Include="Web\NancyBootstrapper.cs" />
-    <Compile Include="Jobs\QuartzBootstrapper.cs" />
     <Compile Include="ServiceBootstrapper.cs" />
     <Compile Include="Web\EmbeddedStaticContentConventionBuilder.cs" />
     <Compile Include="Messaging\Hubs\MessagingHub.cs" />

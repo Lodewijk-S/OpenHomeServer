@@ -1,9 +1,7 @@
-﻿using Quartz;
+﻿using HomeServer8.Server.Jobs;
+using Quartz;
 using Quartz.Impl;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace HomeServer8.Server
 {
@@ -23,6 +21,15 @@ namespace HomeServer8.Server
             _scheduler = schedFact.GetScheduler();
 
             //todo: get the jobs from the container
+            var jobDetail = JobBuilder
+                .Create<TestJob>()
+                .Build();
+
+            var trigger = TriggerBuilder
+                .Create()
+                .WithSimpleSchedule(a => a.WithIntervalInSeconds(1).RepeatForever())
+                .StartNow()
+                .Build();
 
             _scheduler.Start();
         }

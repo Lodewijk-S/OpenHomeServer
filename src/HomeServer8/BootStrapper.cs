@@ -15,7 +15,12 @@ namespace HomeServer8.Server.Bootstrappers
             {
                 using (var container = new WindsorContainer())
                 {
-                    container.Install(new MainInstaller(), new Messaging.MessagingInstaller());
+                    container.Install(
+                        new MainInstaller(), 
+                        new Messaging.MessagingInstaller(), 
+                        new Web.WebInstaller(),
+                        new Jobs.JobInstaller()
+                    );
 
                     HostFactory.Run(x =>
                     {
