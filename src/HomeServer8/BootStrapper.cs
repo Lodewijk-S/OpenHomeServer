@@ -2,6 +2,7 @@
 using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.Resolvers.SpecializedResolvers;
 using Castle.Windsor;
+using System;
 using Topshelf;
 
 namespace HomeServer8.Server.Bootstrappers
@@ -10,20 +11,27 @@ namespace HomeServer8.Server.Bootstrappers
     {
         public static void Main(string[] args)
         {
-            using (var container = new WindsorContainer())
+            try
             {
-                container.Install(new MainInstaller());
-
-                HostFactory.Run(x =>
+                using (var container = new WindsorContainer())
                 {
-                    x.SetServiceName("HomeServer8");
-                    x.SetDescription("Home Server Service for Windows 8");
-                    x.SetDisplayName("HomeServer8 Service");
+                    container.Install(new MainInstaller(), new Messaging.MessagingInstaller());
 
-                    x.StartAutomatically();
+                    HostFactory.Run(x =>
+                    {
+                        x.SetServiceName("HomeServer8");
+                        x.SetDescription("Home Server Service for Windows 8");
+                        x.SetDisplayName("HomeServer8 Service");
 
-                    x.Service<ServiceBootstrapper>(() => container.Resolve<ServiceBootstrapper>());
-                });
+                        x.StartAutomatically();
+
+                        x.Service<ServiceBootstrapper>(() => container.Resolve<ServiceBootstrapper>());
+                    });
+                }
+            }
+            catch (Exception e)
+            {                
+                throw e;
             }
         }        
     }

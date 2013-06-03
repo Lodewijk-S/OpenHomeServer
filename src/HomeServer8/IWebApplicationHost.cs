@@ -31,8 +31,8 @@ namespace HomeServer8.Server
                     EnableDetailedErrors = true,
                     Resolver = _resolver
                 };
-                //a.MapHubs(config);
-                //a.UseNancy();
+                a.MapHubs(config);
+                a.UseNancy();
 
                 var addresses = a.Properties["host.Addresses"] as List<IDictionary<String, System.Object>>;
                 Console.WriteLine("Webserver started at port {0}", addresses[0]["port"]);

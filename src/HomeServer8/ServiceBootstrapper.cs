@@ -16,16 +16,9 @@ namespace HomeServer8.Server.Bootstrappers
 
         public bool Start(HostControl hostControl)
         {
-            try
-            {
-                _webHost.Start();
-                _scheduler.Start();
-                return true;
-            }
-            catch (Exception e)
-            {
-                throw;
-            }
+            _webHost.Start();
+            _scheduler.Start();
+            return true;
         }
 
         public bool Stop(HostControl hostControl)
