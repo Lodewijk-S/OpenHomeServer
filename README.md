@@ -1,3 +1,3 @@
-HomeServer8
+OpenHomeServer
 ===========
-Replacement for the WHS console when using windows8 as a home server.
+Replacement for the WHS console when using a windows machine as a home server.
