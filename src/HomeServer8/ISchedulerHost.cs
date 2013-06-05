@@ -38,7 +38,7 @@ namespace HomeServer8.Server
                 .StartNow()
                 .Build();
 
-            //_scheduler.ScheduleJob(jobDetail, trigger);
+            _scheduler.ScheduleJob(jobDetail, trigger);
             _scheduler.Start();
         }
 
