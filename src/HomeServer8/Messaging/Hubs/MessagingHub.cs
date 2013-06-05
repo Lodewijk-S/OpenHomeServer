@@ -7,7 +7,6 @@ namespace HomeServer8.Server.Messaging.Hubs
     {
         public void SendMessage(string message)
         {
-            //throw new Exception("test");
             Clients.All.showMessage(message);
         }
     }

@@ -1,10 +1,5 @@
 ﻿using Castle.MicroKernel.Registration;
 using Microsoft.AspNet.SignalR.Hubs;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace HomeServer8.Server.Messaging
 {
@@ -14,7 +9,7 @@ namespace HomeServer8.Server.Messaging
         {
             container.Register(
                 Component.For<WindsorDependencyResolver>(),
-                Classes.FromThisAssembly().BasedOn<IHubPipelineModule>()
+                Classes.FromThisAssembly().BasedOn<IHubPipelineModule>().WithServiceFromInterface()
             );
         }
     }

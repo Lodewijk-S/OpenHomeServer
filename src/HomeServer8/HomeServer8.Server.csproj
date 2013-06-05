@@ -129,6 +129,7 @@
     <Compile Include="Jobs\WindsorJobFactory.cs" />
     <Compile Include="Messaging\ErrorLoggingPipelineModule.cs" />
     <Compile Include="Messaging\MessagingInstaller.cs" />
+    <Compile Include="Messaging\OwinSignalrExtensions.cs" />
     <Compile Include="Web\IStartup.cs" />
     <Compile Include="Web\NancyBootstrapper.cs" />
     <Compile Include="ServiceBootstrapper.cs" />
