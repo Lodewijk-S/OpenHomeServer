@@ -1,6 +1,7 @@
 ﻿using Castle.Windsor;
 using Microsoft.AspNet.SignalR;
 using Microsoft.AspNet.SignalR.Hubs;
+using Microsoft.AspNet.SignalR.Infrastructure;
 using Owin;
 
 namespace HomeServer8.Server.Messaging
@@ -10,7 +11,7 @@ namespace HomeServer8.Server.Messaging
         public static IAppBuilder UseSignalr(this IAppBuilder app, IWindsorContainer container)
         {
             var resolver = container.Resolve<WindsorDependencyResolver>();
-            var hubPipeline = resolver.Resolve<IHubPipeline>();
+            var hubPipeline = resolver.Resolve<IHubPipeline>();            
 
             var config = new HubConfiguration
             {

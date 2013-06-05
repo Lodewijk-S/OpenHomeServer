@@ -1,5 +1,8 @@
 ﻿using Castle.MicroKernel.Registration;
+using HomeServer8.Server.Messaging.Hubs;
+using Microsoft.AspNet.SignalR;
 using Microsoft.AspNet.SignalR.Hubs;
+using Microsoft.AspNet.SignalR.Infrastructure;
 
 namespace HomeServer8.Server.Messaging
 {
@@ -9,8 +12,16 @@ namespace HomeServer8.Server.Messaging
         {
             container.Register(
                 Component.For<WindsorDependencyResolver>(),
-                Classes.FromThisAssembly().BasedOn<IHubPipelineModule>().WithServiceFromInterface()
+                Classes.FromThisAssembly().BasedOn<IHubPipelineModule>().WithServiceFromInterface(),
+                Classes.FromThisAssembly().BasedOn<IHub>()                
+            );
+
+            var connectionManager = container.Resolve<WindsorDependencyResolver>().Resolve<IConnectionManager>();
+            container.Register(
+                Component.For<IConnectionManager>().Instance(connectionManager)
             );
         }
     }
+
+
 }
