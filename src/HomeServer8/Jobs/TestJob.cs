@@ -20,7 +20,7 @@ namespace HomeServer8.Server.Jobs
 
         public void Execute(IJobExecutionContext context)
         {
-            _hub.SendMessage("Hello!");
+            //_hub.SendMessage("Hello!");
         }
     }
 }

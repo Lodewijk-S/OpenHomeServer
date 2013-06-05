@@ -1,4 +1,5 @@
-﻿using Nancy;
+﻿using Common.Logging;
+using Nancy;
 using Nancy.Bootstrapper;
 using Nancy.ViewEngines;
 
@@ -27,15 +28,22 @@ namespace HomeServer8.Server.Web
 
             conventions.StaticContentsConventions.Add(
                 Nancy.Embedded.Conventions.EmbeddedStaticContentConventionBuilder.AddDirectory("Scripts", this.GetType().Assembly, "Web\\Scripts")
-            );
-                       
+            );                      
         }
 
-        protected override void ConfigureApplicationContainer(Nancy.TinyIoc.TinyIoCContainer container)
+        protected override void ApplicationStartup(Nancy.TinyIoc.TinyIoCContainer container, IPipelines pipelines)
         {
-            base.ConfigureApplicationContainer(container);            
+            base.ApplicationStartup(container, pipelines);
+            var logger = LogManager.GetCurrentClassLogger(); //container.Resolve<Common.Logging.ILog>();
+
+            pipelines.OnError += (ctx, ex) =>
+            {
+                logger.Error("", ex);
+                return null;
+            };
         }
 
+#if DEBUG
         protected override Nancy.Diagnostics.DiagnosticsConfiguration DiagnosticsConfiguration
         {
             get
@@ -43,5 +51,6 @@ namespace HomeServer8.Server.Web
                 return new Nancy.Diagnostics.DiagnosticsConfiguration { Password="test" };
             }
         }
+#endif
     }
 }

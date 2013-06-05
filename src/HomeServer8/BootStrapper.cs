@@ -1,8 +1,13 @@
-﻿using Castle.Facilities.TypedFactory;
+﻿using Castle.Core;
+using Castle.Facilities.TypedFactory;
+using Castle.MicroKernel;
+using Castle.MicroKernel.Context;
 using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.Resolvers.SpecializedResolvers;
 using Castle.Windsor;
+using Common.Logging;
 using System;
+using System.Collections.Specialized;
 using Topshelf;
 
 namespace HomeServer8.Server.Bootstrappers
@@ -11,8 +16,14 @@ namespace HomeServer8.Server.Bootstrappers
     {
         public static void Main(string[] args)
         {
+            //Setup Logging
+            var properties = new NameValueCollection();
+            LogManager.Adapter = new Common.Logging.Log4Net.Log4NetLoggerFactoryAdapter(properties);
+            var logger = LogManager.GetCurrentClassLogger();
+
             try
             {
+                //Start the container
                 using (var container = new WindsorContainer())
                 {
                     container.Install(
@@ -22,6 +33,7 @@ namespace HomeServer8.Server.Bootstrappers
                         new Jobs.JobInstaller()
                     );
 
+                    //Start the service
                     HostFactory.Run(x =>
                     {
                         x.SetServiceName("HomeServer8");
@@ -35,8 +47,8 @@ namespace HomeServer8.Server.Bootstrappers
                 }
             }
             catch (Exception e)
-            {                
-                throw e;
+            {
+                logger.Error("Cannot start the application", e);
             }
         }        
     }
@@ -50,12 +62,35 @@ namespace HomeServer8.Server.Bootstrappers
             container.Kernel.Resolver.AddSubResolver(new CollectionResolver(container.Kernel, true));
             container.Register(Component.For<IWindsorContainer>().Instance(container));
 
+            //Logging            
+            container.Kernel.Resolver.AddSubResolver(new LoggerSubDependencyResolver());
+
             //Application parts
             container.Register(
                 Component.For<ServiceBootstrapper>().ImplementedBy<ServiceBootstrapper>(),
                 Component.For<ISchedulerHost>().ImplementedBy<QuartzScheduler>(),
                 Component.For<IWebApplicationHost>().ImplementedBy<OwinWebApplicationHost>()
             );
+        }
+    }
+
+    public class LoggerSubDependencyResolver : ISubDependencyResolver
+    {
+        public bool CanResolve(CreationContext context, ISubDependencyResolver contextHandlerResolver, ComponentModel model, DependencyModel dependency)
+        {
+            return dependency.TargetType == typeof(ILog);
+        }
+
+        public object Resolve(CreationContext context, ISubDependencyResolver contextHandlerResolver, ComponentModel model, DependencyModel dependency)
+        {
+            if (CanResolve(context, contextHandlerResolver, model, dependency))
+            {
+                if (dependency.TargetType == typeof(ILog))
+                {
+                    return LogManager.GetLogger(model.Implementation);
+                }
+            }
+            return null;
         }
     }
 }

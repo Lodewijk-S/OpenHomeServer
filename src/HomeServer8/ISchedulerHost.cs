@@ -23,30 +23,23 @@ namespace HomeServer8.Server
 
         public void Start()
         {
-            try
-            {
-                var schedFact = new StdSchedulerFactory();
-                _scheduler = schedFact.GetScheduler();
-                _scheduler.JobFactory = _jobFactory;
+            var schedFact = new StdSchedulerFactory();
+            _scheduler = schedFact.GetScheduler();
+            _scheduler.JobFactory = _jobFactory;
 
-                //todo: get the jobs from the container
-                var jobDetail = JobBuilder
-                    .Create<TestJob>()
-                    .Build();
+            //todo: get the jobs from the container
+            var jobDetail = JobBuilder
+                .Create<TestJob>()
+                .Build();
 
-                var trigger = TriggerBuilder
-                    .Create()
-                    .WithSimpleSchedule(a => a.WithIntervalInSeconds(1).RepeatForever())
-                    .StartNow()
-                    .Build();
+            var trigger = TriggerBuilder
+                .Create()
+                .WithSimpleSchedule(a => a.WithIntervalInSeconds(1).RepeatForever())
+                .StartNow()
+                .Build();
 
-                _scheduler.ScheduleJob(jobDetail, trigger);
-                _scheduler.Start();
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
+            //_scheduler.ScheduleJob(jobDetail, trigger);
+            _scheduler.Start();
         }
 
         public void Dispose()

@@ -14,7 +14,7 @@ namespace HomeServer8.Server.Messaging
         {
             container.Register(
                 Component.For<WindsorDependencyResolver>(),
-                Classes.FromThisAssembly().BasedOn<IHub>()
+                Classes.FromThisAssembly().BasedOn<IHubPipelineModule>()
             );
         }
     }

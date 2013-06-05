@@ -1,5 +1,6 @@
 ﻿using HomeServer8.Server.Web.Providers;
 using Nancy;
+using System;
 
 namespace HomeServer8.Server.Web.Modules
 {

@@ -1,5 +1,7 @@
-﻿using HomeServer8.Server.Messaging;
+﻿using Common.Logging;
+using HomeServer8.Server.Messaging;
 using Microsoft.AspNet.SignalR;
+using Microsoft.AspNet.SignalR.Hubs;
 using Microsoft.Owin.Hosting;
 using Owin;
 using System;
@@ -16,10 +18,12 @@ namespace HomeServer8.Server
     {
         IDisposable _host;
         WindsorDependencyResolver _resolver;
+        ILog _logger;
 
-        public OwinWebApplicationHost(WindsorDependencyResolver resolver)
+        public OwinWebApplicationHost(WindsorDependencyResolver resolver, ILog logger)
         {
             _resolver = resolver;
+            _logger = logger;
         }
 
         public void Start()
@@ -31,28 +35,26 @@ namespace HomeServer8.Server
 
             _host = WebApplication.Start(startOptions, a =>
             {
-                try
+                var config = new HubConfiguration
                 {
-                    var config = new HubConfiguration
-                    {
-                        EnableDetailedErrors = true,
-                        Resolver = _resolver
-                    };
-                    
-                    //SignalR
-                    a.Properties["host.AppName"] = "Homeserver8.Server"; //https://github.com/SignalR/SignalR/issues/1616
-                    a.MapHubs(config);
+                    EnableDetailedErrors = true,
+                    Resolver = _resolver
+                };
 
-                    //Nancy
-                    a.UseNancy();
-
-                    var addresses = a.Properties["host.Addresses"] as List<IDictionary<String, System.Object>>;
-                    Console.WriteLine("Webserver started at port {0}", addresses[0]["port"]);
-                }
-                catch (Exception e)
+                //SignalR
+                a.Properties["host.AppName"] = "Homeserver8.Server"; //https://github.com/SignalR/SignalR/issues/1616
+                a.MapHubs(config);
+                foreach (var m in _resolver.ResolveAll<IHubPipelineModule>())
                 {
-                    throw e;
+                    GlobalHost.HubPipeline.AddModule(m);
                 }
+
+
+                //Nancy
+                a.UseNancy();
+
+                var addresses = a.Properties["host.Addresses"] as List<IDictionary<String, System.Object>>;
+                _logger.InfoFormat("Webserver started at port {0}", addresses[0]["port"]);
             });
         }
 
