@@ -11,9 +11,9 @@ namespace HomeServer8.Server.Jobs
     {
         IHubContext _context;
 
-        public TestJob(IConnectionManager connectionManager)
+        public TestJob(HubContextFactory<MessagingHub> factory)
         {
-            _context = connectionManager.GetHubContext<MessagingHub>();
+            _context = factory.GetContext();
         }
 
         public void Execute(IJobExecutionContext context)

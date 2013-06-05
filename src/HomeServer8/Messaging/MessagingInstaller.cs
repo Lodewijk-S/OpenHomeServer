@@ -13,15 +13,24 @@ namespace HomeServer8.Server.Messaging
             container.Register(
                 Component.For<WindsorDependencyResolver>(),
                 Classes.FromThisAssembly().BasedOn<IHubPipelineModule>().WithServiceFromInterface(),
-                Classes.FromThisAssembly().BasedOn<IHub>()                
-            );
-
-            var connectionManager = container.Resolve<WindsorDependencyResolver>().Resolve<IConnectionManager>();
-            container.Register(
-                Component.For<IConnectionManager>().Instance(connectionManager)
+                Classes.FromThisAssembly().BasedOn<IHub>(),
+                Component.For(typeof(HubContextFactory<>))
             );
         }
     }
 
+    public class HubContextFactory<T> where T : Hub
+    {
+        IConnectionManager _connectionManager;
 
+        public HubContextFactory(WindsorDependencyResolver resolver)
+        {
+            _connectionManager = resolver.Resolve<IConnectionManager>();
+        }
+
+        public IHubContext GetContext()
+        {
+            return _connectionManager.GetHubContext<T>();
+        }
+    }
 }
