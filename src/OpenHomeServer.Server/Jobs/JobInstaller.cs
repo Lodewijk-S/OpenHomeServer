@@ -18,6 +18,7 @@ namespace OpenHomeServer.Server.Jobs
                         scheduler.JobFactory = container.Resolve<IJobFactory>();
                         return scheduler;
                     }),
+                Classes.FromThisAssembly().BasedOn<IJobDefinition>().WithServiceBase(),
                 Classes.FromThisAssembly().BasedOn<IJob>()
             );
         }

@@ -1,31 +1,28 @@
 ﻿using System;
 using Quartz;
+using System.Collections.Generic;
 
 namespace OpenHomeServer.Server.Jobs
 {
     public class JobOrganiser : IDisposable
     {
         readonly IScheduler _scheduler;
+        readonly IEnumerable<IJobDefinition> _jobdefinitions;
 
-        public JobOrganiser(IScheduler scheduler)
+        public JobOrganiser(IScheduler scheduler, IEnumerable<IJobDefinition> jobDefinitions)
         {
             _scheduler = scheduler;
+            _jobdefinitions = jobDefinitions;
         }
 
         public void Start()
         {
-            //todo: get the jobs from the container
-            var jobDetail = JobBuilder
-                .Create<TestJob>()
-                .Build();
-
-            var trigger = TriggerBuilder
-                .Create()
-                .WithSimpleSchedule(a => a.WithIntervalInSeconds(1).RepeatForever())
-                .StartNow()
-                .Build();
-
-            _scheduler.ScheduleJob(jobDetail, trigger);
+            foreach (var j in _jobdefinitions)
+            {
+                var jobDetail = JobBuilder.Create(j.GetJobType()).Build();
+                var trigger = j.GetDefaultTrigger();
+                _scheduler.ScheduleJob(jobDetail, trigger);
+            }
 
             _scheduler.Start();
         }
