@@ -21,4 +21,16 @@ namespace OpenHomeServer.Server.Jobs
             _context.Clients.SendMessage("Ping From Job");
         }
     }
+
+    public class TestJobDefinition : JobDefinition<TestJob>
+    {
+        public override ITrigger GetDefaultTrigger()
+        {
+            return TriggerBuilder
+                .Create()
+                .WithSimpleSchedule(a => a.WithIntervalInSeconds(1).RepeatForever())
+                .StartNow()
+                .Build();
+        }
+    }
 }

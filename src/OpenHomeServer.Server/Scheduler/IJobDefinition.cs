@@ -20,16 +20,4 @@ namespace OpenHomeServer.Server.Jobs
 
         public abstract ITrigger GetDefaultTrigger();
     }
-
-    public class TestJobDefinition : JobDefinition<TestJob>
-    {
-        public override ITrigger GetDefaultTrigger()
-        {
-            return TriggerBuilder
-                .Create()
-                .WithSimpleSchedule(a => a.WithIntervalInSeconds(1).RepeatForever())
-                .StartNow()
-                .Build();
-        }
-    }
 }

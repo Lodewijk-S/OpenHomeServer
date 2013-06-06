@@ -122,18 +122,19 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DuctTape\LoggerSubDependencyResolver.cs" />
-    <Compile Include="Jobs\IJobDefinition.cs" />
-    <Compile Include="Jobs\JobOrganiser.cs" />
+    <Compile Include="Scheduler\IJobDefinition.cs" />
+    <Compile Include="Scheduler\JobOrganiser.cs" />
     <Compile Include="DuctTape\OwinWebApplicationHost.cs" />
-    <Compile Include="Jobs\JobInstaller.cs" />
-    <Compile Include="Jobs\TestJob.cs" />
-    <Compile Include="Jobs\WindsorJobFactory.cs" />
+    <Compile Include="Scheduler\JobInstaller.cs" />
+    <Compile Include="Scheduler\Jobs\TestJob.cs" />
+    <Compile Include="Scheduler\WindsorJobFactory.cs" />
     <Compile Include="DuctTape\MainInstaller.cs" />
     <Compile Include="Messaging\ErrorLoggingPipelineModule.cs" />
     <Compile Include="Messaging\MessagingInstaller.cs" />
     <Compile Include="Messaging\OwinSignalrExtensions.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="Web\IStartup.cs" />
+    <Compile Include="Web\Modules\SchedulerModule.cs" />
     <Compile Include="Web\NancyBootstrapper.cs" />
     <Compile Include="OpenHomeServerService.cs" />
     <Compile Include="Web\EmbeddedStaticContentConventionBuilder.cs" />
@@ -154,6 +155,7 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Web\Scripts\jquery-1.9.1.min.map" />
+    <EmbeddedResource Include="Web\Views\Scheduler\index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Web\Scripts\jquery-1.9.1.intellisense.js" />
