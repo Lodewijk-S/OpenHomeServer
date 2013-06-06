@@ -142,7 +142,6 @@
     <Compile Include="Messaging\WindsorDependencyResolver.cs" />
     <Compile Include="Web\Modules\HomeModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Web\NancyWindsorContainer.cs" />
     <Compile Include="Web\Providers\ServerInfoProvider.cs" />
     <Compile Include="SSDP\SSDPServer.cs" />
     <Compile Include="Web\WebInstaller.cs" />

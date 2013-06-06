@@ -1,16 +1,30 @@
-﻿using Common.Logging;
+﻿using Castle.Windsor;
+using Common.Logging;
 using Nancy;
 using Nancy.Bootstrapper;
+using Nancy.Bootstrappers.Windsor;
 using Nancy.ViewEngines;
 
 namespace OpenHomeServer.Server.Web
 {
-    public class NancyBootstrapper : DefaultNancyBootstrapper
+    public class NancyBootstrapper : WindsorNancyBootstrapper
     {
+        private static IWindsorContainer _container;
+
         public NancyBootstrapper()
         {
             ResourceViewLocationProvider.RootNamespaces.Add(GetType().Assembly, "OpenHomeServer.Server.Web.Views");
+        }        
+
+        public static void SetApplicationContainer(IWindsorContainer container)
+        {
+            _container = container;
         }
+
+        protected override Castle.Windsor.IWindsorContainer GetApplicationContainer()
+        {
+            return _container;
+        }        
 
         protected override NancyInternalConfiguration InternalConfiguration
         {
@@ -31,10 +45,10 @@ namespace OpenHomeServer.Server.Web
             );                      
         }
 
-        protected override void ApplicationStartup(Nancy.TinyIoc.TinyIoCContainer container, IPipelines pipelines)
+        protected override void ApplicationStartup(IWindsorContainer container, IPipelines pipelines)
         {
             base.ApplicationStartup(container, pipelines);
-            var logger = LogManager.GetCurrentClassLogger(); //container.Resolve<Common.Logging.ILog>();
+            var logger = container.Resolve<Common.Logging.ILog>();
 
             pipelines.OnError += (ctx, ex) =>
             {

@@ -8,7 +8,7 @@ namespace OpenHomeServer.Server.Web
         public void Install(Castle.Windsor.IWindsorContainer container, Castle.MicroKernel.SubSystems.Configuration.IConfigurationStore store)
         {
             //A bit hackish, but this is how Nancy likes it
-            MyWindsorNancyBootstrapper.SetApplicationContainer(container);
+            NancyBootstrapper.SetApplicationContainer(container);
 
             container.Register(
                 Component.For<NancyRequestScopeInterceptor>()               
