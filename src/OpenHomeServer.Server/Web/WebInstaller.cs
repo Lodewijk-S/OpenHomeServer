@@ -1,5 +1,6 @@
 ﻿using Castle.MicroKernel.Registration;
 using Nancy.Bootstrappers.Windsor;
+using OpenHomeServer.Server.Web.Providers;
 
 namespace OpenHomeServer.Server.Web
 {
@@ -11,7 +12,8 @@ namespace OpenHomeServer.Server.Web
             NancyBootstrapper.SetApplicationContainer(container);
 
             container.Register(
-                Component.For<NancyRequestScopeInterceptor>()               
+                Component.For<NancyRequestScopeInterceptor>(),
+                Component.For<ServerInfoProvider>().LifestyleScoped<NancyPerWebRequestScopeAccessor>()
             );
 
             container.Kernel.ProxyFactory.AddInterceptorSelector(new NancyRequestScopeInterceptorSelector());

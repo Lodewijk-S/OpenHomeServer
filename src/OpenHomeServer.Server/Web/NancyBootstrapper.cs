@@ -48,7 +48,7 @@ namespace OpenHomeServer.Server.Web
         protected override void ApplicationStartup(IWindsorContainer container, IPipelines pipelines)
         {
             base.ApplicationStartup(container, pipelines);
-            var logger = container.Resolve<Common.Logging.ILog>();
+            var logger = LogManager.GetCurrentClassLogger(); //container.Resolve<Common.Logging.ILog>();
 
             pipelines.OnError += (ctx, ex) =>
             {
