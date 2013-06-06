@@ -2,7 +2,25 @@
 	Layout = "layout.cshtml";
 }
 @section Javascript {
-    
+    <script type="text/javascript">
+		$(function(){
+			$("#container").append("this means javascript works");		
+
+			var messageHub = $.connection.messagingHub;
+
+			messageHub.client.showMessage = function(message){
+				$("#container").append("<br />" + message);
+			};
+
+			$.connection.hub.start()
+				.done(function(){ console.log('Now connected, connection ID=' + $.connection.hub.id); })
+				.fail(function(){ console.log('Could not Connect!'); });
+
+			$("#messageSender").click(function(){
+				messageHub.server.sendMessage("This came from the client");
+			});
+		});
+	</script>
 }
 hello world from @Model.ServerInfo.ServerName!
 <br />
@@ -12,22 +30,3 @@ hello world from @Model.ServerInfo.ServerName!
 
 </div>
 
-<script type="text/javascript">
-	$(function(){
-		$("#container").append("this means javascript works");		
-
-		var messageHub = $.connection.messagingHub;
-
-		messageHub.client.showMessage = function(message){
-			$("#container").append("<br />" + message);
-		};
-
-		$.connection.hub.start()
-			.done(function(){ console.log('Now connected, connection ID=' + $.connection.hub.id); })
-			.fail(function(){ console.log('Could not Connect!'); });
-
-		$("#messageSender").click(function(){
-			messageHub.server.sendMessage("This came from the client");
-		});
-	});
-</script>
