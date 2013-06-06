@@ -1,32 +1,19 @@
-﻿using OpenHomeServer.Server.Jobs;
+﻿using System;
 using Quartz;
-using Quartz.Impl;
-using Quartz.Spi;
-using System;
 
-namespace OpenHomeServer.Server
+namespace OpenHomeServer.Server.Jobs
 {
-    public interface ISchedulerHost : IDisposable
+    public class JobOrganiser : IDisposable
     {
-        void Start();
-    }
+        readonly IScheduler _scheduler;
 
-    public class QuartzScheduler : ISchedulerHost
-    {
-        IScheduler _scheduler;
-        IJobFactory _jobFactory;
-
-        public QuartzScheduler(IJobFactory jobFactory)
+        public JobOrganiser(IScheduler scheduler)
         {
-            _jobFactory = jobFactory;
+            _scheduler = scheduler;
         }
 
         public void Start()
         {
-            var schedFact = new StdSchedulerFactory();
-            _scheduler = schedFact.GetScheduler();
-            _scheduler.JobFactory = _jobFactory;
-
             //todo: get the jobs from the container
             var jobDetail = JobBuilder
                 .Create<TestJob>()
@@ -39,6 +26,7 @@ namespace OpenHomeServer.Server
                 .Build();
 
             _scheduler.ScheduleJob(jobDetail, trigger);
+
             _scheduler.Start();
         }
 

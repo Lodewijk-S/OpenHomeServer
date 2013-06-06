@@ -1,5 +1,6 @@
 ﻿using Castle.MicroKernel.Registration;
 using Quartz;
+using Quartz.Impl;
 using Quartz.Spi;
 
 namespace OpenHomeServer.Server.Jobs
@@ -10,6 +11,13 @@ namespace OpenHomeServer.Server.Jobs
         {
             container.Register(
                 Component.For<IJobFactory>().ImplementedBy<WindsorJobFactory>(),
+                Component.For<IScheduler>().UsingFactoryMethod((k, c) =>
+                    {
+                        var schedFact = new StdSchedulerFactory();
+                        var scheduler = schedFact.GetScheduler();
+                        scheduler.JobFactory = container.Resolve<IJobFactory>();
+                        return scheduler;
+                    }),
                 Classes.FromThisAssembly().BasedOn<IJob>()
             );
         }

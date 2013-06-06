@@ -1,7 +1,6 @@
 ﻿using Castle.Windsor;
 using Microsoft.AspNet.SignalR;
 using Microsoft.AspNet.SignalR.Hubs;
-using Microsoft.AspNet.SignalR.Infrastructure;
 using Owin;
 
 namespace OpenHomeServer.Server.Messaging

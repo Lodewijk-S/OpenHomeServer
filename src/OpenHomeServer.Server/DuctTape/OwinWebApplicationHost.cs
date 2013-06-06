@@ -6,14 +6,9 @@ using System;
 using System.Collections.Generic;
 using Castle.Windsor;
 
-namespace OpenHomeServer.Server
+namespace OpenHomeServer.Server.DuctTape
 {
-    public interface IWebApplicationHost : IDisposable
-    {
-        void Start();
-    }
-
-    public class OwinWebApplicationHost : IWebApplicationHost
+    public class OwinWebApplicationHost : IDisposable
     {
         IDisposable _host;
         readonly IWindsorContainer _container;

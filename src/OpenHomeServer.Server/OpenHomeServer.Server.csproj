@@ -121,18 +121,20 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BootStrapper.cs" />
-    <Compile Include="ISchedulerHost.cs" />
-    <Compile Include="IWebApplicationHost.cs" />
+    <Compile Include="DuctTape\LoggerSubDependencyResolver.cs" />
+    <Compile Include="Jobs\JobOrganiser.cs" />
+    <Compile Include="DuctTape\OwinWebApplicationHost.cs" />
     <Compile Include="Jobs\JobInstaller.cs" />
     <Compile Include="Jobs\TestJob.cs" />
     <Compile Include="Jobs\WindsorJobFactory.cs" />
+    <Compile Include="DuctTape\MainInstaller.cs" />
     <Compile Include="Messaging\ErrorLoggingPipelineModule.cs" />
     <Compile Include="Messaging\MessagingInstaller.cs" />
     <Compile Include="Messaging\OwinSignalrExtensions.cs" />
+    <Compile Include="Startup.cs" />
     <Compile Include="Web\IStartup.cs" />
     <Compile Include="Web\NancyBootstrapper.cs" />
-    <Compile Include="ServiceBootstrapper.cs" />
+    <Compile Include="OpenHomeServerService.cs" />
     <Compile Include="Web\EmbeddedStaticContentConventionBuilder.cs" />
     <Compile Include="Messaging\Hubs\MessagingHub.cs" />
     <Compile Include="Messaging\WindsorDependencyResolver.cs" />
