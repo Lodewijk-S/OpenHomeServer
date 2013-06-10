@@ -4,19 +4,19 @@ using Microsoft.Owin.Hosting;
 using Owin;
 using System;
 using System.Collections.Generic;
-using Castle.Windsor;
+using Ninject;
 
 namespace OpenHomeServer.Server.DuctTape
 {
     public class OwinWebApplicationHost : IDisposable
     {
         IDisposable _host;
-        readonly IWindsorContainer _container;
+        readonly IKernel _kernel;
         readonly ILog _logger;
 
-        public OwinWebApplicationHost(IWindsorContainer container, ILog logger)
+        public OwinWebApplicationHost(IKernel kernel, ILog logger)
         {
-            _container = container;
+            _kernel = kernel;
             _logger = logger;
         }
 
@@ -30,11 +30,11 @@ namespace OpenHomeServer.Server.DuctTape
             _host = WebApplication.Start(startOptions, a =>
             {
                 //SignalR
-                a.UseSignalr(_container);
+                a.UseSignalr(_kernel);
 
                 //Nancy
                 a.UseNancy();
-
+                
                 var addresses = a.Properties["host.Addresses"] as List<IDictionary<String, Object>>;
                 _logger.InfoFormat("Webserver started at port {0}", addresses[0]["port"]);
             });

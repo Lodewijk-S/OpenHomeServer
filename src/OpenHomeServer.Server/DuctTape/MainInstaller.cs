@@ -1,29 +1,21 @@
-﻿using Castle.Facilities.TypedFactory;
-using Castle.MicroKernel.Registration;
-using Castle.MicroKernel.Resolvers.SpecializedResolvers;
-using Castle.Windsor;
+﻿using Common.Logging;
+using Ninject;
+using Ninject.Modules;
 using OpenHomeServer.Server.Jobs;
 
 namespace OpenHomeServer.Server.DuctTape
 {
-    public class MainInstaller : IWindsorInstaller
+    public class MainModule : NinjectModule
     {
-        public void Install(IWindsorContainer container, Castle.MicroKernel.SubSystems.Configuration.IConfigurationStore store)
+
+        public override void Load()
         {
-            //Container configuration
-            container.AddFacility<TypedFactoryFacility>();
-            container.Kernel.Resolver.AddSubResolver(new CollectionResolver(container.Kernel, true));
-            container.Register(Component.For<IWindsorContainer>().Instance(container));
-
             //Logging            
-            container.Kernel.Resolver.AddSubResolver(new LoggerSubDependencyResolver());
+            Kernel.Bind<ILog>().ToMethod(c => LogManager.GetLogger(c.Binding.Service));
 
-            //Application parts
-            container.Register(
-                Component.For<OpenHomeServerService>(),
-                Component.For<JobOrganiser>(),
-                Component.For<OwinWebApplicationHost>()
-            );
+            Bind<OpenHomeServerService>().ToSelf();
+            Bind<JobOrganiser>().ToSelf();
+            Bind<OwinWebApplicationHost>().ToSelf();
         }
     }
 }

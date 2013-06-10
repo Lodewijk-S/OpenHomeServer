@@ -1,22 +1,19 @@
-﻿using Castle.MicroKernel.Registration;
-using Nancy.Bootstrappers.Windsor;
+﻿using Nancy;
+using Nancy.Bootstrappers.Ninject;
+using Ninject.Extensions.Conventions;
+using Ninject.Modules;
 using OpenHomeServer.Server.Web.Providers;
 
 namespace OpenHomeServer.Server.Web
 {
-    public class WebInstaller : IWindsorInstaller
+    public class WebModule : NinjectModule
     {
-        public void Install(Castle.Windsor.IWindsorContainer container, Castle.MicroKernel.SubSystems.Configuration.IConfigurationStore store)
+        public override void Load()
         {
             //A bit hackish, but this is how Nancy likes it
-            NancyBootstrapper.SetApplicationContainer(container);
+            NancyBootstrapper.SetApplicationContainer(Kernel);
 
-            container.Register(
-                Component.For<NancyRequestScopeInterceptor>(),
-                Component.For<ServerInfoProvider>().LifestyleScoped<NancyPerWebRequestScopeAccessor>()
-            );
-
-            container.Kernel.ProxyFactory.AddInterceptorSelector(new NancyRequestScopeInterceptorSelector());
+            Kernel.Load(new[] { new FactoryModule() });
         }
     }
 }

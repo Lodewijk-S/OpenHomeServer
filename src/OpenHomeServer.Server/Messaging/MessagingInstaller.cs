@@ -1,21 +1,22 @@
-﻿using Castle.MicroKernel.Registration;
-using OpenHomeServer.Server.Messaging.Hubs;
+﻿using OpenHomeServer.Server.Messaging.Hubs;
 using Microsoft.AspNet.SignalR;
 using Microsoft.AspNet.SignalR.Hubs;
 using Microsoft.AspNet.SignalR.Infrastructure;
+using Ninject.Modules;
+using Ninject.Extensions.Conventions;
+using Ninject.Extensions.Conventions.Syntax;
 
 namespace OpenHomeServer.Server.Messaging
 {
-    public class MessagingInstaller : IWindsorInstaller
+    public class MessagingModule : NinjectModule
     {
-        public void Install(Castle.Windsor.IWindsorContainer container, Castle.MicroKernel.SubSystems.Configuration.IConfigurationStore store)
+        public override void Load()
         {
-            container.Register(
-                Component.For<WindsorDependencyResolver>(),
-                Classes.FromThisAssembly().BasedOn<IHubPipelineModule>().WithServiceFromInterface(),
-                Classes.FromThisAssembly().BasedOn<IHub>(),
-                Component.For(typeof(HubContextFactory<>))
-            );
+            Bind<SignalRNinjectDependencyResolver>().ToSelf();
+            Bind(typeof(HubContextFactory<>)).ToSelf();
+            
+            Kernel.Bind(x => x.FromThisAssembly().SelectAllClasses().InheritedFrom<IHubPipelineModule>().BindSingleInterface());
+            Kernel.Bind(x => x.FromThisAssembly().SelectAllClasses().InheritedFrom<IHub>().BindToSelf());
         }
     }
 
@@ -23,7 +24,7 @@ namespace OpenHomeServer.Server.Messaging
     {
         IConnectionManager _connectionManager;
 
-        public HubContextFactory(WindsorDependencyResolver resolver)
+        public HubContextFactory(SignalRNinjectDependencyResolver resolver)
         {
             _connectionManager = resolver.Resolve<IConnectionManager>();
         }
