@@ -1,5 +1,5 @@
 ﻿using Common.Logging;
-using Ninject;
+using StructureMap;
 using System;
 using System.Collections.Specialized;
 using Topshelf;
@@ -18,11 +18,17 @@ namespace OpenHomeServer.Server
             try
             {
                 //Start the container
-                using (var kernel = new StandardKernel())
+                using (var container = new Container(x => {
+                    x.AddRegistry<DuctTape.MainRegistry>();
+                    x.AddRegistry<Messaging.MessagingRegistry>();
+                    x.AddRegistry<Jobs.JobRegistry>();
+                    x.AddRegistry<Web.WebRegistry>();
+                }))
                 {
-                    kernel.Load(new[]{typeof(Startup).Assembly });
+                    //A bit hackish, but this is how Nancy likes it
+                    Web.NancyBootstrapper.SetApplicationContainer(container);
 
-                    var service = kernel.Get<OpenHomeServerService>();
+                    var service = container.GetInstance<OpenHomeServerService>();
 
                     //Start the service
                     HostFactory.Run(x =>

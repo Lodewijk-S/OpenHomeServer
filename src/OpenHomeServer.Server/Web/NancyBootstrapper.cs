@@ -1,29 +1,29 @@
 ﻿using Common.Logging;
 using Nancy;
 using Nancy.Bootstrapper;
-using Nancy.Bootstrappers.Ninject;
+using Nancy.Bootstrappers.StructureMap;
 using Nancy.ViewEngines;
-using Ninject;
+using StructureMap;
 
 namespace OpenHomeServer.Server.Web
 {
-    public class NancyBootstrapper : NinjectNancyBootstrapper
+    public class NancyBootstrapper : StructureMapNancyBootstrapper
     {
-        private static IKernel _kernel;
+        private static IContainer _container;
 
         public NancyBootstrapper()
         {
             ResourceViewLocationProvider.RootNamespaces.Add(GetType().Assembly, "OpenHomeServer.Server.Web.Views");
-        }        
-
-        public static void SetApplicationContainer(IKernel kernel)
-        {
-            _kernel = kernel;
         }
 
-        protected override IKernel GetApplicationContainer()
+        public static void SetApplicationContainer(IContainer container)
         {
-            return _kernel;
+            _container = container;
+        }
+
+        protected override IContainer GetApplicationContainer()
+        {
+            return _container;
         }        
 
         protected override NancyInternalConfiguration InternalConfiguration
@@ -45,20 +45,10 @@ namespace OpenHomeServer.Server.Web
             );                      
         }
 
-        protected override void ApplicationStartup(IKernel kernel, IPipelines pipelines)
+        protected override void ApplicationStartup(IContainer kernel, IPipelines pipelines)
         {
             base.ApplicationStartup(kernel, pipelines);
-            var logger = kernel.Get<ILog>();
-
-            pipelines.BeforeRequest.AddItemToStartOfPipeline((ctx) => {
-                logger.Info("BeforeRequest: " + ctx.Request.Url.ToString());
-                return null;
-            });
-
-            pipelines.AfterRequest.AddItemToStartOfPipeline((ctx) =>
-            {
-                logger.Info("AfterRequest: " + ctx.Request.Url.ToString());
-            });        
+            var logger = kernel.GetInstance<ILog>();
 
             pipelines.OnError.AddItemToStartOfPipeline((ctx, ex) =>
             {

@@ -1,19 +1,14 @@
 ﻿using Nancy;
-using Nancy.Bootstrappers.Ninject;
-using Ninject.Extensions.Conventions;
-using Ninject.Modules;
 using OpenHomeServer.Server.Web.Providers;
+using StructureMap.Configuration.DSL;
 
 namespace OpenHomeServer.Server.Web
 {
-    public class WebModule : NinjectModule
+    public class WebRegistry : Registry
     {
-        public override void Load()
+        public WebRegistry()
         {
-            //A bit hackish, but this is how Nancy likes it
-            NancyBootstrapper.SetApplicationContainer(Kernel);
-
-            Kernel.Load(new[] { new FactoryModule() });
+            ForConcreteType<ServerInfoProvider>();            
         }
     }
 }
