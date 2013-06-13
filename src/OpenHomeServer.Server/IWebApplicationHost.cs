@@ -6,9 +6,14 @@ using System;
 using System.Collections.Generic;
 using StructureMap;
 
-namespace OpenHomeServer.Server.DuctTape
+namespace OpenHomeServer.Server
 {
-    public class OwinWebApplicationHost : IDisposable
+    public interface IWebApplicationHost : IDisposable
+    {
+        void Start();
+    }
+
+    public class OwinWebApplicationHost : IWebApplicationHost
     {
         IDisposable _host;
         readonly IContainer _container;

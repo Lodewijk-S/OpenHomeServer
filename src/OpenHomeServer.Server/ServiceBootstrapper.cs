@@ -1,20 +1,19 @@
 ﻿using Common.Logging;
 using System;
-using OpenHomeServer.Server.DuctTape;
 using Topshelf;
 
-namespace OpenHomeServer.Server
+namespace OpenHomeServer.Server.Bootstrappers
 {
-    public class OpenHomeServerService : ServiceControl
+    public class ServiceBootstrapper : ServiceControl
     {
-        private readonly OwinWebApplicationHost _webHost;
-        private readonly Jobs.JobOrganiser _jobOrganiser;
-        private readonly ILog _logger;
+        private IWebApplicationHost _webHost;
+        private ISchedulerHost _scheduler;
+        private ILog _logger;
 
-        public OpenHomeServerService(OwinWebApplicationHost webHost, Jobs.JobOrganiser jobOrganiser, ILog logger)
+        public ServiceBootstrapper(IWebApplicationHost webHost, ISchedulerHost scheduler, ILog logger)
         {
             _webHost = webHost;
-            _jobOrganiser = jobOrganiser;
+            _scheduler = scheduler;
             _logger = logger;
         }
 
@@ -23,7 +22,7 @@ namespace OpenHomeServer.Server
             try
             {
                 _webHost.Start();
-                _jobOrganiser.Start();
+                _scheduler.Start();
                 return true;
             }
             catch(Exception e)
@@ -32,12 +31,12 @@ namespace OpenHomeServer.Server
                 return false;
             }
         }
-        
+
         public bool Stop(HostControl hostControl)
         {
             try
             {
-                if (_jobOrganiser != null) _jobOrganiser.Dispose();
+                if (_scheduler != null) _scheduler.Dispose();
                 if (_webHost != null) _webHost.Dispose();
 
                 return true;
