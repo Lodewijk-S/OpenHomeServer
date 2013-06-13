@@ -8,9 +8,7 @@ namespace OpenHomeServer.Server.Web.Modules
     {
         public HomeModule(ServerInfoProvider provider)
         {
-            Get["/"] = x =>{
-                return View["index.cshtml", new { ServerInfo = provider.GetServerInfo(), Title = "TITLE" }];
-            };
+            Get["/"] = x => View["index.cshtml", new { ServerInfo = provider.GetServerInfo(), Title = "TITLE" }];
         }
     }
 }

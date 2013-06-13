@@ -1,29 +1,29 @@
-﻿using Common.Logging;
+﻿using Castle.Windsor;
+using Common.Logging;
 using Nancy;
 using Nancy.Bootstrapper;
-using Nancy.Bootstrappers.Ninject;
+using Nancy.Bootstrappers.Windsor;
 using Nancy.ViewEngines;
-using Ninject;
 
 namespace OpenHomeServer.Server.Web
 {
-    public class NancyBootstrapper : NinjectNancyBootstrapper
+    public class NancyBootstrapper : WindsorNancyBootstrapper
     {
-        private static IKernel _kernel;
+        private static IWindsorContainer _container;
 
         public NancyBootstrapper()
         {
             ResourceViewLocationProvider.RootNamespaces.Add(GetType().Assembly, "OpenHomeServer.Server.Web.Views");
         }        
 
-        public static void SetApplicationContainer(IKernel kernel)
+        public static void SetApplicationContainer(IWindsorContainer container)
         {
-            _kernel = kernel;
+            _container = container;
         }
 
-        protected override IKernel GetApplicationContainer()
+        protected override Castle.Windsor.IWindsorContainer GetApplicationContainer()
         {
-            return _kernel;
+            return _container;
         }        
 
         protected override NancyInternalConfiguration InternalConfiguration
@@ -45,26 +45,16 @@ namespace OpenHomeServer.Server.Web
             );                      
         }
 
-        protected override void ApplicationStartup(IKernel kernel, IPipelines pipelines)
+        protected override void ApplicationStartup(IWindsorContainer container, IPipelines pipelines)
         {
-            base.ApplicationStartup(kernel, pipelines);
-            var logger = kernel.Get<ILog>();
+            base.ApplicationStartup(container, pipelines);
+            var logger = LogManager.GetCurrentClassLogger(); //container.Resolve<Common.Logging.ILog>();
 
-            pipelines.BeforeRequest.AddItemToStartOfPipeline((ctx) => {
-                logger.Info("BeforeRequest: " + ctx.Request.Url.ToString());
-                return null;
-            });
-
-            pipelines.AfterRequest.AddItemToStartOfPipeline((ctx) =>
+            pipelines.OnError += (ctx, ex) =>
             {
-                logger.Info("AfterRequest: " + ctx.Request.Url.ToString());
-            });        
-
-            pipelines.OnError.AddItemToStartOfPipeline((ctx, ex) =>
-            {
-                logger.Error("Something went wrong with Nancy", ex);
+                logger.Error("", ex);
                 return null;
-            });
+            };
         }
 
 #if DEBUG

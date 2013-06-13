@@ -1,7 +1,7 @@
-﻿using Common.Logging;
-using Ninject;
-using System;
+﻿using System;
 using System.Collections.Specialized;
+using Castle.Windsor;
+using Common.Logging;
 using Topshelf;
 
 namespace OpenHomeServer.Server
@@ -18,11 +18,16 @@ namespace OpenHomeServer.Server
             try
             {
                 //Start the container
-                using (var kernel = new StandardKernel())
+                using (var container = new WindsorContainer())
                 {
-                    kernel.Load(new[]{typeof(Startup).Assembly });
+                    container.Install(
+                        new DuctTape.MainInstaller(), 
+                        new Messaging.MessagingInstaller(), 
+                        new Web.WebInstaller(),
+                        new Jobs.JobInstaller()
+                        );
 
-                    var service = kernel.Get<OpenHomeServerService>();
+                    var service = container.Resolve<OpenHomeServerService>();
 
                     //Start the service
                     HostFactory.Run(x =>
