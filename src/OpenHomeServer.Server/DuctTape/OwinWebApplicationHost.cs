@@ -4,19 +4,19 @@ using Microsoft.Owin.Hosting;
 using Owin;
 using System;
 using System.Collections.Generic;
-using StructureMap;
+using Ninject;
 
 namespace OpenHomeServer.Server.DuctTape
 {
     public class OwinWebApplicationHost : IDisposable
     {
         IDisposable _host;
-        readonly IContainer _container;
+        readonly IKernel _kernel;
         readonly ILog _logger;
 
-        public OwinWebApplicationHost(IContainer container, ILog logger)
+        public OwinWebApplicationHost(IKernel kernel, ILog logger)
         {
-            _container = container;
+            _kernel = kernel;
             _logger = logger;
         }
 
@@ -30,7 +30,7 @@ namespace OpenHomeServer.Server.DuctTape
             _host = WebApplication.Start(startOptions, a =>
             {
                 //SignalR
-                a.UseSignalr(_container);
+                a.UseSignalr(_kernel);
 
                 //Nancy
                 a.UseNancy();

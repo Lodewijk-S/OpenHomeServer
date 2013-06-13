@@ -1,20 +1,21 @@
 ﻿using Common.Logging;
+using Ninject;
+using Ninject.Modules;
 using OpenHomeServer.Server.Jobs;
-using StructureMap.Configuration.DSL;
 
 namespace OpenHomeServer.Server.DuctTape
 {
-    public class MainRegistry : Registry
+    public class MainModule : NinjectModule
     {
 
-        public MainRegistry()
+        public override void Load()
         {
-            //Logging   
-            For<ILog>().Use(c => LogManager.GetLogger(c.RequestedName));
+            //Logging            
+            Kernel.Bind<ILog>().ToMethod(c => LogManager.GetLogger(c.Binding.Service));
 
-            ForConcreteType<OpenHomeServerService>();
-            ForConcreteType<JobOrganiser>();
-            ForConcreteType<OwinWebApplicationHost>();
+            Bind<OpenHomeServerService>().ToSelf();
+            Bind<JobOrganiser>().ToSelf();
+            Bind<OwinWebApplicationHost>().ToSelf();
         }
     }
 }

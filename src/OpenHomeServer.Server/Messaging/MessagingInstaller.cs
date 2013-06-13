@@ -2,29 +2,21 @@
 using Microsoft.AspNet.SignalR;
 using Microsoft.AspNet.SignalR.Hubs;
 using Microsoft.AspNet.SignalR.Infrastructure;
-using StructureMap.Configuration.DSL;
+using Ninject.Modules;
+using Ninject.Extensions.Conventions;
+using Ninject.Extensions.Conventions.Syntax;
 
 namespace OpenHomeServer.Server.Messaging
 {
-    public class MessagingRegistry : Registry
+    public class MessagingModule : NinjectModule
     {
-        public MessagingRegistry()
+        public override void Load()
         {
-            ForConcreteType<StructureMapDependencyResolver>();
-            For(typeof(HubContextFactory<>));
-
-            Scan(x => {
-                x.TheCallingAssembly();
-
-                x.AddAllTypesOf<IHubPipelineModule>();
-                x.WithDefaultConventions();
-            });
-
-            Scan(x => {
-                x.TheCallingAssembly();
-
-                x.AddAllTypesOf<IHub>();
-            });
+            Bind<SignalRNinjectDependencyResolver>().ToSelf();
+            Bind(typeof(HubContextFactory<>)).ToSelf();
+            
+            Kernel.Bind(x => x.FromThisAssembly().SelectAllClasses().InheritedFrom<IHubPipelineModule>().BindSingleInterface());
+            Kernel.Bind(x => x.FromThisAssembly().SelectAllClasses().InheritedFrom<IHub>().BindToSelf());
         }
     }
 
@@ -32,7 +24,7 @@ namespace OpenHomeServer.Server.Messaging
     {
         IConnectionManager _connectionManager;
 
-        public HubContextFactory(StructureMapDependencyResolver resolver)
+        public HubContextFactory(SignalRNinjectDependencyResolver resolver)
         {
             _connectionManager = resolver.Resolve<IConnectionManager>();
         }

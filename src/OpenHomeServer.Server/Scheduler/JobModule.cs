@@ -1,32 +1,26 @@
-﻿using Quartz;
+﻿using Ninject;
+using Ninject.Modules;
+using Ninject.Extensions.Conventions;
+using Quartz;
 using Quartz.Impl;
 using Quartz.Spi;
-using StructureMap.Configuration.DSL;
 
 namespace OpenHomeServer.Server.Jobs
 {
-    public class JobRegistry : Registry
+    public class JobModule : NinjectModule
     {
-        public JobRegistry()
+        public override void Load()
         {
-            For<IJobFactory>().Use<StructureMapJobFactory>();
-            For<IScheduler>().Use(c => {
+            Bind<IJobFactory>().To<NinjectJobFactory>();
+            Bind<IScheduler>().ToMethod(c => {
                 var schedFact = new StdSchedulerFactory();
                 var scheduler = schedFact.GetScheduler();
-                scheduler.JobFactory = c.GetInstance<IJobFactory>();
+                scheduler.JobFactory = c.Kernel.Get<IJobFactory>();
                 return scheduler;
             });
 
-            Scan(x => {
-                x.TheCallingAssembly();
-                x.AddAllTypesOf<IJobDefinition>();
-                x.WithDefaultConventions();
-            });
-
-            Scan(x => {
-                x.TheCallingAssembly();
-                x.AddAllTypesOf<IJob>();                
-            });
+            Kernel.Bind(x => x.FromThisAssembly().SelectAllClasses().InheritedFrom<IJobDefinition>().BindSingleInterface());
+            Kernel.Bind(x => x.FromThisAssembly().SelectAllClasses().InheritedFrom<IJob>());
         }
     }
 }
