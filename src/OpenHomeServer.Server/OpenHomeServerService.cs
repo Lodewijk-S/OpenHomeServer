@@ -8,13 +8,11 @@ namespace OpenHomeServer.Server
     public class OpenHomeServerService : ServiceControl
     {
         private readonly OwinWebApplicationHost _webHost;
-        private readonly Jobs.JobOrganiser _jobOrganiser;
         private readonly ILog _logger;
 
-        public OpenHomeServerService(OwinWebApplicationHost webHost, Jobs.JobOrganiser jobOrganiser, ILog logger)
+        public OpenHomeServerService(OwinWebApplicationHost webHost, ILog logger)
         {
             _webHost = webHost;
-            _jobOrganiser = jobOrganiser;
             _logger = logger;
         }
 
@@ -23,7 +21,6 @@ namespace OpenHomeServer.Server
             try
             {
                 _webHost.Start();
-                _jobOrganiser.Start();
                 return true;
             }
             catch(Exception e)
@@ -37,7 +34,6 @@ namespace OpenHomeServer.Server
         {
             try
             {
-                if (_jobOrganiser != null) _jobOrganiser.Dispose();
                 if (_webHost != null) _webHost.Dispose();
 
                 return true;

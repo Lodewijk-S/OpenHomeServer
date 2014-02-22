@@ -27,7 +27,7 @@ namespace OpenHomeServer.Server.DuctTape
                 Port = 8080
             };
 
-            _host = WebApplication.Start(startOptions, a =>
+            _host = WebApp.Start(startOptions, a =>
             {
                 //SignalR
                 a.UseSignalr(_container);

@@ -13,10 +13,9 @@ namespace OpenHomeServer.Server.Messaging
             _logger = logger;
         }
 
-        protected override void OnIncomingError(Exception ex, IHubIncomingInvokerContext context)
+        protected override void OnIncomingError(ExceptionContext exceptionContext, IHubIncomingInvokerContext invokerContext)
         {
-            //base.OnIncomingError(ex, context);
-            _logger.Error("Error in Signalr", ex);
+            _logger.Error("Error in Signalr", exceptionContext.Error);
         }
     }
 }

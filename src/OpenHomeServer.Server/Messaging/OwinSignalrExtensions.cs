@@ -25,7 +25,7 @@ namespace OpenHomeServer.Server.Messaging
                 hubPipeline.AddModule(m);
             }
 
-            app.MapHubs(config);
+            app.MapSignalR(config);
 
             return app;
         }

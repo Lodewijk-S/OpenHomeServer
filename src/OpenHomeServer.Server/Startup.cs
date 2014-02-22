@@ -24,7 +24,7 @@ namespace OpenHomeServer.Server
                         new DuctTape.MainInstaller(), 
                         new Messaging.MessagingInstaller(), 
                         new Web.WebInstaller(),
-                        new Jobs.JobInstaller()
+                        new Plugins.PluginInstaller()
                         );
 
                     var service = container.Resolve<OpenHomeServerService>();
@@ -37,10 +37,11 @@ namespace OpenHomeServer.Server
                             x.SetDisplayName("OpenHomeServer Service");
 
                             x.StartAutomatically();
-
-                            x.Service(() => service);
+                            
+                            x.Service(() => service);                            
                         });
                 }
+                Console.ReadKey();
             }
             catch (Exception e)
             {

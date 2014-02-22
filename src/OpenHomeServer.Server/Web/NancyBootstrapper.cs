@@ -12,8 +12,8 @@ namespace OpenHomeServer.Server.Web
         private static IWindsorContainer _container;
 
         public NancyBootstrapper()
-        {
-            ResourceViewLocationProvider.RootNamespaces.Add(GetType().Assembly, "OpenHomeServer.Server.Web.Views");
+        {            
+            ResourceViewLocationProvider.RootNamespaces.Add(GetType().Assembly, "OpenHomeServer.Server");            
         }        
 
         public static void SetApplicationContainer(IWindsorContainer container)
@@ -31,7 +31,7 @@ namespace OpenHomeServer.Server.Web
             get
             {
                 return NancyInternalConfiguration.WithOverrides(x => {
-                    x.ViewLocationProvider = typeof(ResourceViewLocationProvider);                    
+                    x.ViewLocationProvider = typeof(ResourceViewLocationProvider);             
                 });
             }
         }
@@ -42,7 +42,15 @@ namespace OpenHomeServer.Server.Web
 
             conventions.StaticContentsConventions.Add(
                 Nancy.Embedded.Conventions.EmbeddedStaticContentConventionBuilder.AddDirectory("Scripts", this.GetType().Assembly, "Web\\Scripts")
-            );                      
+            );
+            conventions.ViewLocationConventions.Add((viewName, model, viewLocationContext) =>
+            {
+                return string.Concat("Plugins/", viewLocationContext.ModuleName, "/", viewName);
+            });
+            conventions.ViewLocationConventions.Add((viewName, model, viewLocationContext) =>
+            {
+                return string.Concat("Web/Views/", viewName);
+            });
         }
 
         protected override void ApplicationStartup(IWindsorContainer container, IPipelines pipelines)
@@ -62,7 +70,7 @@ namespace OpenHomeServer.Server.Web
         {
             get
             {
-                return new Nancy.Diagnostics.DiagnosticsConfiguration { Password="test" };
+                return new Nancy.Diagnostics.DiagnosticsConfiguration { Password="test"};
             }
         }
 #endif

@@ -1,8 +1,8 @@
-﻿using Castle.Facilities.TypedFactory;
+﻿using Castle.Facilities.Startable;
+using Castle.Facilities.TypedFactory;
 using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.Resolvers.SpecializedResolvers;
 using Castle.Windsor;
-using OpenHomeServer.Server.Jobs;
 
 namespace OpenHomeServer.Server.DuctTape
 {
@@ -12,6 +12,7 @@ namespace OpenHomeServer.Server.DuctTape
         {
             //Container configuration
             container.AddFacility<TypedFactoryFacility>();
+            container.AddFacility<StartableFacility>(f => f.DeferredStart());
             container.Kernel.Resolver.AddSubResolver(new CollectionResolver(container.Kernel, true));
             container.Register(Component.For<IWindsorContainer>().Instance(container));
 
@@ -21,7 +22,6 @@ namespace OpenHomeServer.Server.DuctTape
             //Application parts
             container.Register(
                 Component.For<OpenHomeServerService>(),
-                Component.For<JobOrganiser>(),
                 Component.For<OwinWebApplicationHost>()
             );
         }
