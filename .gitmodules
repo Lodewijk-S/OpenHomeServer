@@ -1,0 +1,3 @@
+[submodule "dependencies/CdRipper"]
+	path = dependencies/CdRipper
+	url = https://github.com/LodewijkSioen/CdRipper.net.git
