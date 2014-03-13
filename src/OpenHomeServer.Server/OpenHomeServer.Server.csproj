@@ -197,7 +197,12 @@
     <EmbeddedResource Include="Web\Scripts\jquery.signalR-2.0.1.js" />
     <EmbeddedResource Include="Web\Scripts\jquery.signalR-2.0.1.min.js" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\..\dependencies\CdRipper\src\CdRipper\CdRipper.csproj">
+      <Project>{6B7D4490-A896-4403-A385-404D10D8BBC6}</Project>
+      <Name>CdRipper</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>

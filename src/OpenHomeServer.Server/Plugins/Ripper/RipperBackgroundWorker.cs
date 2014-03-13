@@ -1,4 +1,6 @@
-﻿using OpenHomeServer.Server.Messaging;
+﻿using CdRipper.Rip;
+using CdRipper.Tagging;
+using OpenHomeServer.Server.Messaging;
 using OpenHomeServer.Server.Messaging.Hubs;
 using System;
 using System.Collections.Generic;
@@ -92,13 +94,16 @@ namespace OpenHomeServer.Server.Plugins.Ripper
                     switch(disc.DriveFormat)
                     {
                         case "CDFS":
-                            Console.WriteLine("this is a cd");
+                            using (var drive = CdDrive.Create(disc.Name.Substring(0,1)))
+                            {
+                                var tagSource = new MusicBrainzTagSource(new MusicBrainzApi("http://musicbrainz.org/"));
+                                var discIds = tagSource.GetTags(drive.ReadTableOfContents());
+                                factory.GetContext().Clients.SendMessage("Disc inserted: Possible names:" + string.Join(",", discIds.Select(d => d.Title)) );
+                            }
                             break;
                         case "UDF":
-                            Console.WriteLine("this is a dvd");
                             break;
                         default:
-                            Console.WriteLine("Dont know: " + disc.DriveFormat);
                             break;
                     }
                 });

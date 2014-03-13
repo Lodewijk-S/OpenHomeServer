@@ -14,6 +14,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{FC6109
 		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Dependencies", "Dependencies", "{FD0C3332-236B-4A6B-B79A-C0AB707D2C45}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CdRipper", "..\dependencies\CdRipper\src\CdRipper\CdRipper.csproj", "{6B7D4490-A896-4403-A385-404D10D8BBC6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -32,8 +36,15 @@ Global
 		{E565A41F-A46E-47C4-9FB1-BF2B1053487B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E565A41F-A46E-47C4-9FB1-BF2B1053487B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E565A41F-A46E-47C4-9FB1-BF2B1053487B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6B7D4490-A896-4403-A385-404D10D8BBC6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6B7D4490-A896-4403-A385-404D10D8BBC6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6B7D4490-A896-4403-A385-404D10D8BBC6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6B7D4490-A896-4403-A385-404D10D8BBC6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{6B7D4490-A896-4403-A385-404D10D8BBC6} = {FD0C3332-236B-4A6B-B79A-C0AB707D2C45}
 	EndGlobalSection
 EndGlobal
