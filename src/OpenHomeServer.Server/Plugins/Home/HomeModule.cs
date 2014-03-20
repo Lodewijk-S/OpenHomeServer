@@ -1,8 +1,7 @@
-﻿using OpenHomeServer.Server.Web.Providers;
-using Nancy;
-using System;
+﻿using Nancy;
+using OpenHomeServer.Server.Web.Providers;
 
-namespace OpenHomeServer.Server.Web.Modules
+namespace OpenHomeServer.Server.Plugins.Home
 {
     public class HomeModule : NancyModule
     {

@@ -1,14 +1,6 @@
-﻿using Castle.Core;
-using Nancy;
-using OpenHomeServer.Server.Messaging.Hubs;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reactive.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Nancy;
 
-namespace OpenHomeServer.Server.Plugins.Ripper.UI
+namespace OpenHomeServer.Server.Plugins.Ripper
 {
     public class RipperModule : NancyModule
     {

@@ -84,7 +84,7 @@ namespace OpenHomeServer.Server.Plugins.Ripper
     public class RipperBackgroundWorker : IRunAtStartUp, IDisposable
     {
         private IDisposable _observer;
-        public RipperBackgroundWorker(HubContextFactory<MessagingHub> factory)
+        public RipperBackgroundWorker(NotificationService notificationService)
         {   
             _observer = new DiscInsertedObservable().Subscribe(async disc => 
             {
@@ -96,12 +96,21 @@ namespace OpenHomeServer.Server.Plugins.Ripper
                         case "CDFS":
                             using (var drive = CdDrive.Create(disc.Name.Substring(0,1)))
                             {
-                                var tagSource = new MusicBrainzTagSource(new MusicBrainzApi("http://musicbrainz.org/"));
-                                var discIds = tagSource.GetTags(drive.ReadTableOfContents());
-                                factory.GetContext().Clients.SendMessage("Disc inserted: Possible names:" + string.Join(",", discIds.Select(d => d.Title)) );
+                                var tagSource = new MusicBrainzTagSource(new MusicBrainzApi("http://musicbrainz.org"));
+                                var discIds = tagSource.GetTags(drive.ReadTableOfContents()).ToList();
+                                if (discIds.Any())
+                                {
+                                    notificationService.SendNotificationToAllClients(new Notification("Disc inserted: Possible names:" +
+                                                             string.Join(",", discIds.Select(d => d.Title))));
+                                }
+                                else
+                                {
+                                    notificationService.SendNotificationToAllClients(new Notification("Disc inserted, but we could nog determine the name of the disc :( "));
+                                }
                             }
                             break;
                         case "UDF":
+                            //this is a DVD or a BluRay disc
                             break;
                         default:
                             break;

@@ -1,8 +1,8 @@
 ﻿using Castle.MicroKernel.Registration;
-using OpenHomeServer.Server.Messaging.Hubs;
 using Microsoft.AspNet.SignalR;
-using Microsoft.AspNet.SignalR.Hubs;
 using Microsoft.AspNet.SignalR.Infrastructure;
+using OpenHomeServer.Server.Messaging.Hubs;
+using Microsoft.AspNet.SignalR.Hubs;
 
 namespace OpenHomeServer.Server.Messaging
 {
@@ -14,23 +14,8 @@ namespace OpenHomeServer.Server.Messaging
                 Component.For<WindsorDependencyResolver>(),
                 Classes.FromThisAssembly().BasedOn<IHubPipelineModule>().WithServiceFromInterface(),
                 Classes.FromThisAssembly().BasedOn<IHub>(),
-                Component.For(typeof(HubContextFactory<>))
+                Component.For<NotificationService>().UsingFactoryMethod(k => new NotificationService(k.Resolve<WindsorDependencyResolver>().Resolve<IConnectionManager>()))
             );
-        }
-    }
-
-    public class HubContextFactory<T> where T : Hub
-    {
-        IConnectionManager _connectionManager;
-
-        public HubContextFactory(WindsorDependencyResolver resolver)
-        {
-            _connectionManager = resolver.Resolve<IConnectionManager>();
-        }
-
-        public IHubContext GetContext()
-        {
-            return _connectionManager.GetHubContext<T>();
         }
     }
 }
