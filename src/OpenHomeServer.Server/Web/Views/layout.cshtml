@@ -3,14 +3,52 @@
 <html>
 	<head>
 		<title>@(Model != null ? Model.Title ?? "OpenHomeserver Plugin" : "OpenHomeserver Plugin")</title>
-    @RenderSection("Styles", false)
-    <script type="text/javascript" src="/Scripts/jquery-2.1.0.min.js"></script>
-    <script type="text/javascript" src="/Scripts/jquery.signalR-2.0.1.min.js"></script>
-    <script type="text/javascript" src="signalr/hubs"></script>
-  </head>
+        @RenderSection("Styles", false)
+        <script type="text/javascript" src="/Scripts/jquery-2.1.0.min.js"></script>
+	    <script type="text/javascript" src="/Scripts/jquery.signalR-2.0.1.min.js"></script>
+        <script type="text/javascript" src="/Scripts/notify.min.js"></script>
+        <script type="text/javascript" src="signalr/hubs"></script>
+    </head>
 	<body>
-    @RenderBody()
+        @RenderBody()
 
-    @RenderSection("Javascript", false)
+        @RenderSection("Javascript", false)
+	    <script type="text/javascript">
+	        $(document).on('click', '.notifyjs-wrapper', function () {
+	            var link = $(this).find(".link").text();
+	            window.location.href = link;
+	        });
+
+    	    var notificationHub = $.connection.notificationHub;
+
+    	    function sendNotification(message, link, level) {
+    	        notificationHub.server.notifyAll({ Message: message, Link: link });
+    	    }
+
+    	    $(function () {
+    	        $.notify.addStyle('foo', {
+    	            html:
+                        "<div>" +
+                            "<div class='image' data-notify-html='image'/>" +
+                            "<div class='text-wrapper'>" +
+                                "<div class='title' data-notify-html='title'/>" +
+                                "<div class='text' data-notify-html='text'/>" +
+                                "<div class='link' style='display:none' data-notify-html='link' />" +
+                            "</div>" +
+                        "</div>"
+    	        });
+
+    	        notificationHub.client.onRecieveNotification = function (notification) {
+    	            
+    	            $.notify({title: notification.Message, link: notification.Link}, {
+    	                className: "info", style: 'foo'
+    	            });
+    	        };
+
+    	        $.connection.hub.start()
+    	            .done(function () { console.log('Now connected, connection ID=' + $.connection.hub.id); })
+    	            .fail(function () { console.log('Could not Connect!'); });
+    	    });
+    	</script>
   </body>
 </html>

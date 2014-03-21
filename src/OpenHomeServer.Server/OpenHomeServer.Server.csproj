@@ -167,9 +167,7 @@
     <None Include="App.config" />
     <None Include="packages.config" />
     <EmbeddedResource Include="Plugins\Home\index.cshtml" />
-    <EmbeddedResource Include="Web\Views\layout.cshtml">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
+    <EmbeddedResource Include="Web\Views\layout.cshtml" />
     <EmbeddedResource Include="Web\Scripts\jquery-2.1.0.min.map" />
     <EmbeddedResource Include="Plugins\Ripper\index.cshtml" />
   </ItemGroup>
@@ -205,6 +203,9 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Plugins\Notifications\" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Web\Scripts\notify.min.js" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

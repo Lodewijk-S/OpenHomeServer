@@ -5,21 +5,8 @@
     <script type="text/javascript">
         $(function() {
             $("#container").append("this means javascript works");
-
-            var messageHub = $.connection.notificationHub;
-
-            messageHub.client.onRecieveNotification = function(notification) {
-                $("#container").append("<br />" + notification.Message);
-            };
-
-            $.connection.hub.start()
-                .done(function() { console.log('Now connected, connection ID=' + $.connection.hub.id); })
-                .fail(function() { console.log('Could not Connect!'); });
-
-            $("#messageSender").click(function() {
-                messageHub.server.notifyAll({ Message: "This came from the client" });
-            });
         });
+        $("#messageSender").click(function () { sendNotification("test!", "http://www.google.be"); });
     </script>
 }
 hello world from @Model.ServerInfo.ServerName!
