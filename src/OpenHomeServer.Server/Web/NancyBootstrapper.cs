@@ -41,7 +41,7 @@ namespace OpenHomeServer.Server.Web
             base.ConfigureConventions(conventions);
 
             conventions.StaticContentsConventions.Add(
-                Nancy.Embedded.Conventions.EmbeddedStaticContentConventionBuilder.AddDirectory("Scripts", this.GetType().Assembly, "Web\\Scripts")
+                Nancy.Embedded.Conventions.EmbeddedStaticContentConventionBuilder.AddDirectory("Assets", this.GetType().Assembly, "Web\\Assets")
             );
             conventions.ViewLocationConventions.Add((viewName, model, viewLocationContext) =>
             {
