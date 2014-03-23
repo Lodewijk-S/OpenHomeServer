@@ -6,7 +6,7 @@
         $(function() {
             $("#container").append("this means javascript works");
         });
-        $("#messageSender").click(function () { sendNotification("test!", "http://www.google.be"); });
+        $("#messageSender").click(function () { openHomeServer.notificator.sendNotification("test!", "http://www.google.be"); });
     </script>
 }
 hello world from @Model.ServerInfo.ServerName!

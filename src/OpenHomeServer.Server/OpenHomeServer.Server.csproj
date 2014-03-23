@@ -210,6 +210,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Web\Assets\Styles\toastr.min.css" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Web\Assets\Scripts\OpenHomeServer.js" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>

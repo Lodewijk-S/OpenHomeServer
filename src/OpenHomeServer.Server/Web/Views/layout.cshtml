@@ -9,28 +9,17 @@
 	    <script type="text/javascript" src="/Assets/Scripts/jquery.signalR-2.0.1.min.js"></script>
         <script type="text/javascript" src="/Assets/Scripts/toastr.min.js"></script>
         <script type="text/javascript" src="signalr/hubs"></script>
+        <script type="text/javascript" src="/Assets/Scripts/OpenHomeServer.js"></script>
     </head>
 	<body>
         @RenderBody()
 
         @RenderSection("Javascript", false)
 	    <script type="text/javascript">
-	        toastr.options.closeButton = true;
-    	    var notificationHub = $.connection.notificationHub;
-
-    	    function sendNotification(message, link) {
-    	        notificationHub.server.notifyAll({ Message: message, Link: link });
-    	    }
-
-    	    $(function () {
-    	        notificationHub.client.onRecieveNotification = function (notification) {
-    	            toastr.info(notification.Message + "<br /><a href='"+notification.Link+"'>Click here for more info</a>", "Notification");
-    	        };
-
-    	        $.connection.hub.start()
-    	            .done(function () { console.log('Now connected, connection ID=' + $.connection.hub.id); })
-    	            .fail(function () { console.log('Could not Connect!'); });
-    	    });
+        var openHomeServer;
+        $(function(){
+	          openHomeServer = new openHomeServer();
+         });
     	</script>
   </body>
 </html>
