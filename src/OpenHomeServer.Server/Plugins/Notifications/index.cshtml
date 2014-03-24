@@ -1,0 +1,11 @@
+﻿@{
+	Layout = "layout.cshtml";
+}
+
+<ul>
+    @foreach (var notification in Model.Notifications)
+    {
+        @:<li>@notification.Message</li>
+    }
+        
+</ul>

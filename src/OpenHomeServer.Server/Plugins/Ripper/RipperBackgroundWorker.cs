@@ -1,7 +1,5 @@
 ﻿using CdRipper.Rip;
 using CdRipper.Tagging;
-using OpenHomeServer.Server.Messaging;
-using OpenHomeServer.Server.Messaging.Hubs;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -9,6 +7,7 @@ using System.Linq;
 using System.Reactive.Disposables;
 using System.Threading;
 using System.Threading.Tasks;
+using OpenHomeServer.Server.Plugins.Notifications;
 
 namespace OpenHomeServer.Server.Plugins.Ripper
 {
@@ -84,7 +83,7 @@ namespace OpenHomeServer.Server.Plugins.Ripper
     public class RipperBackgroundWorker : IRunAtStartUp, IDisposable
     {
         private IDisposable _observer;
-        public RipperBackgroundWorker(NotificationService notificationService)
+        public RipperBackgroundWorker(Notificator notificator)
         {   
             _observer = new DiscInsertedObservable().Subscribe(async disc => 
             {
@@ -100,12 +99,12 @@ namespace OpenHomeServer.Server.Plugins.Ripper
                                 var discIds = tagSource.GetTags(drive.ReadTableOfContents()).ToList();
                                 if (discIds.Any())
                                 {
-                                    notificationService.SendNotificationToAllClients(new Notification("Disc inserted: Possible names:" +
+                                    notificator.SendNotificationToAllClients(new Notification("Disc inserted: Possible names:" +
                                                              string.Join(",", discIds.Select(d => d.Title))));
                                 }
                                 else
                                 {
-                                    notificationService.SendNotificationToAllClients(new Notification("Disc inserted, but we could nog determine the name of the disc :( "));
+                                    notificator.SendNotificationToAllClients(new Notification("Disc inserted, but we could nog determine the name of the disc :( "));
                                 }
                             }
                             break;

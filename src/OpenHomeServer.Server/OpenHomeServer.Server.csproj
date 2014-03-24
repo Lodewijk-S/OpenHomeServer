@@ -145,6 +145,10 @@
     <Compile Include="DuctTape\OwinWebApplicationHost.cs" />
     <Compile Include="DuctTape\MainInstaller.cs" />
     <Compile Include="Messaging\ErrorLoggingPipelineModule.cs" />
+    <Compile Include="Plugins\Notifications\Notification.cs" />
+    <Compile Include="Plugins\Notifications\NotificationModule.cs" />
+    <Compile Include="Plugins\Notifications\NotificationRepository.cs" />
+    <Compile Include="Plugins\Notifications\Notificator.cs" />
     <Compile Include="Messaging\MessagingInstaller.cs" />
     <Compile Include="Messaging\OwinSignalrExtensions.cs" />
     <Compile Include="Plugins\IRunAtStartUp.cs" />
@@ -155,7 +159,7 @@
     <Compile Include="Web\NancyBootstrapper.cs" />
     <Compile Include="OpenHomeServerService.cs" />
     <Compile Include="Web\EmbeddedStaticContentConventionBuilder.cs" />
-    <Compile Include="Messaging\Hubs\MessagingHub.cs" />
+    <Compile Include="Plugins\Notifications\NotificationHub.cs" />
     <Compile Include="Messaging\WindsorDependencyResolver.cs" />
     <Compile Include="Plugins\Home\HomeModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -170,6 +174,7 @@
     <EmbeddedResource Include="Web\Views\layout.cshtml" />
     <EmbeddedResource Include="Web\Assets\Scripts\jquery-2.1.0.min.map" />
     <EmbeddedResource Include="Plugins\Ripper\index.cshtml" />
+    <EmbeddedResource Include="Plugins\Notifications\index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.5">
@@ -201,9 +206,7 @@
       <Name>CdRipper</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Plugins\Notifications\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <EmbeddedResource Include="Web\Assets\Scripts\toastr.min.js" />
   </ItemGroup>
