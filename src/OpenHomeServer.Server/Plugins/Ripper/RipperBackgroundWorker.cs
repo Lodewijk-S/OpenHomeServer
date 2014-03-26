@@ -82,31 +82,42 @@ namespace OpenHomeServer.Server.Plugins.Ripper
 
     public class RipperBackgroundWorker : IRunAtStartUp, IDisposable
     {
-        private IDisposable _observer;
-        public RipperBackgroundWorker(Notificator notificator)
-        {   
-            _observer = new DiscInsertedObservable().Subscribe(async disc => 
+        private readonly IDisposable _observer;
+
+        public RipperBackgroundWorker(Notificator notificator, RipperService ripperService)
+        {
+            _observer = new DiscInsertedObservable().Subscribe(async disc =>
             {
-                await Task.Run(() => 
-                { 
+                await Task.Run(() =>
+                {
                     //Todo: Rip CD
-                    switch(disc.DriveFormat)
+                    switch (disc.DriveFormat)
                     {
                         case "CDFS":
-                            using (var drive = CdDrive.Create(disc.Name.Substring(0,1)))
+                            List<DiscIdentification> discIds;
+                            using (var drive = CdDrive.Create(disc))
                             {
                                 var tagSource = new MusicBrainzTagSource(new MusicBrainzApi("http://musicbrainz.org"));
-                                var discIds = tagSource.GetTags(drive.ReadTableOfContents()).ToList();
-                                if (discIds.Any())
-                                {
-                                    notificator.SendNotificationToAllClients(new Notification("Disc inserted: Possible names:" +
-                                                             string.Join(",", discIds.Select(d => d.Title))));
-                                }
-                                else
-                                {
-                                    notificator.SendNotificationToAllClients(new Notification("Disc inserted, but we could nog determine the name of the disc :( "));
-                                }
+                                discIds = tagSource.GetTags(drive.ReadTableOfContents()).ToList();
                             }
+                            if (discIds.Count == 0)
+                            {
+                                notificator.SendNotificationToAllClients(
+                                    new Notification(
+                                        "Disc inserted, but we could not determine the name of the disc :( "));
+                            }
+                            else if (discIds.Count == 1)
+                            {
+                                notificator.SendNotificationToAllClients(
+                                    new Notification("Disc inserted. We started ripping it now."));
+                                ripperService.Start(disc, discIds.Single());
+                            }
+                            else
+                            {
+                                notificator.SendNotificationToAllClients(
+                                    new Notification("Disc inserted, but we found multiple matches for this disc."));
+                            }
+                            
                             break;
                         case "UDF":
                             //this is a DVD or a BluRay disc
@@ -115,7 +126,7 @@ namespace OpenHomeServer.Server.Plugins.Ripper
                             break;
                     }
                 });
-            });            
+            });
         }
 
         public void Dispose()
