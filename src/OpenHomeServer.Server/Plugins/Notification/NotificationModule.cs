@@ -7,11 +7,11 @@ namespace OpenHomeServer.Server.Plugins.Notifications
         private readonly NotificationRepository _notificationRepository;
 
         public NotificationModule(NotificationRepository notificationRepository)
-            : base("notification")
+            : base("notifications")
         {
             _notificationRepository = notificationRepository;
 
-            Get["/"] = x => View["index.cshtml", new { Notifications = _notificationRepository.GetLatestNotifications() }];
+            Get["/"] = x => View["index.cshtml", new { Title="Notifications", Notifications = _notificationRepository.GetLatestNotifications() }];
         }
     }
 }
