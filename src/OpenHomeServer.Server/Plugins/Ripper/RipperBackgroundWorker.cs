@@ -98,7 +98,7 @@ namespace OpenHomeServer.Server.Plugins.Ripper
                             using (var drive = CdDrive.Create(disc))
                             {
                                 var tagSource = new MusicBrainzTagSource(new MusicBrainzApi("http://musicbrainz.org"));
-                                discIds = tagSource.GetTags(drive.ReadTableOfContents()).ToList();
+                                discIds = tagSource.GetTags(drive.ReadTableOfContents().Result).ToList();
                             }
                             if (discIds.Count == 0)
                             {

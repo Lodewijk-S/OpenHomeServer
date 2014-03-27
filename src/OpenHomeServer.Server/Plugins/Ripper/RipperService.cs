@@ -12,7 +12,7 @@ namespace OpenHomeServer.Server.Plugins.Ripper
         {
             using (var drive = CdDrive.Create(disc))
             {
-                foreach (var track in drive.ReadTableOfContents().Tracks)
+                foreach (var track in drive.ReadTableOfContents().Result.Tracks)
                 {
                     using (var reader = new TrackReader(drive))
                     {
@@ -21,7 +21,7 @@ namespace OpenHomeServer.Server.Plugins.Ripper
                             Track = single.Tracks.Single(t => t.TrackNumber == track.TrackNumber)
                         }))
                         {
-                            reader.ReadTrack(track, lame.Write, (read, bytes) => { });
+                            reader.ReadTrack(track, lame.Write, (read, bytes) => { }).Wait();
                         }
                     }
                 }
