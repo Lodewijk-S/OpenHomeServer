@@ -1,14 +1,45 @@
 ﻿using System.IO;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using CdRipper.Encode;
 using CdRipper.Rip;
 using CdRipper.Tagging;
+using OpenHomeServer.Server.Plugins.Notifications;
 
 namespace OpenHomeServer.Server.Plugins.Ripper
 {
     public class RipperService
     {
-        public void Start(DriveInfo disc, DiscIdentification single)
+        private readonly Notificator _notificator;
+        private readonly CancellationTokenSource _cancellationTokenSource;
+        private RippingStatus _rippingStatus = RippingStatus.Idle;
+
+        public RipperService(Notifications.Notificator notificator)
+        {
+            _notificator = notificator;
+            _cancellationTokenSource = new CancellationTokenSource();
+        }
+
+        public void StartRipping(DriveInfo disc, DiscIdentification single)
+        {
+            _rippingStatus =RippingStatus.Busy;
+            var rippingTask = new Task(() => DoRipping(disc, single), _cancellationTokenSource.Token, TaskCreationOptions.LongRunning);
+            rippingTask.ContinueWith(t => _rippingStatus = RippingStatus.Idle);
+            rippingTask.Start();
+        }
+
+        public void CancelRipping()
+        {
+            _cancellationTokenSource.Cancel();
+        }
+
+        public RippingStatus GetCurrentStatus()
+        {
+            return _rippingStatus;
+        }
+
+        private async void DoRipping(DriveInfo disc, DiscIdentification single)
         {
             using (var drive = CdDrive.Create(disc))
             {
@@ -18,32 +49,26 @@ namespace OpenHomeServer.Server.Plugins.Ripper
                     {
                         using (var lame = new LameMp3Encoder(new EncoderSettings
                         {
-                            Track = single.Tracks.Single(t => t.TrackNumber == track.TrackNumber)
+                            Track = single.Tracks.Single(t => t.TrackNumber == track.TrackNumber),
+                            OutputFile = @"C:\Users\lodesioe\Desktop\encoding\OpenHomeserverRipping\track" + track.TrackNumber.ToString("##") + ".mp3"
                         }))
                         {
-                            reader.ReadTrack(track, lame.Write, (read, bytes) => { }).Wait();
+                            await reader.ReadTrack(track, lame.Write, (read, bytes) =>
+                            {
+                                _notificator.SendNotificationToAllClients(new Notification(string.Format("ripped {0} of {1}", read, bytes)));
+                            });
                         }
                     }
                 }
             }
         }
-
-        public RippingStatus GetCurrentStatus()
-        {
-            return new RippingStatus();
-        }
     }
 
-    public class RippingStatus
+    public enum RippingStatus
     {
-        public DriveStatus Drive { get; private set; }
-        public TableOfContents Disc { get; private set; }
-    }
-
-    public enum DriveStatus
-    {
-        Empty,
         Idle,
-        Busy
+        Busy,
+        Canceled,
+        Faulted
     }
 }

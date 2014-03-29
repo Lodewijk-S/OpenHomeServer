@@ -88,7 +88,7 @@ namespace OpenHomeServer.Server.Plugins.Ripper
         {
             _observer = new DiscInsertedObservable().Subscribe(async disc =>
             {
-                await Task.Run(() =>
+                await Task.Run(async () =>
                 {
                     //Todo: Rip CD
                     switch (disc.DriveFormat)
@@ -98,7 +98,7 @@ namespace OpenHomeServer.Server.Plugins.Ripper
                             using (var drive = CdDrive.Create(disc))
                             {
                                 var tagSource = new MusicBrainzTagSource(new MusicBrainzApi("http://musicbrainz.org"));
-                                discIds = tagSource.GetTags(drive.ReadTableOfContents().Result).ToList();
+                                discIds = tagSource.GetTags(await drive.ReadTableOfContents()).ToList();
                             }
                             if (discIds.Count == 0)
                             {
@@ -110,7 +110,7 @@ namespace OpenHomeServer.Server.Plugins.Ripper
                             {
                                 notificator.SendNotificationToAllClients(
                                     new Notification("Disc inserted. We started ripping it now."));
-                                ripperService.Start(disc, discIds.Single());
+                                ripperService.StartRipping(disc, discIds.Single());
                             }
                             else
                             {

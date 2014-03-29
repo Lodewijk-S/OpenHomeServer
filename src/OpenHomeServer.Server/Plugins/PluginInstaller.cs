@@ -2,7 +2,6 @@
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
 using Castle.Facilities.Startable;
-using System;
 
 namespace OpenHomeServer.Server.Plugins
 {
@@ -12,7 +11,8 @@ namespace OpenHomeServer.Server.Plugins
         {
             container.Register(
                 Classes.FromThisAssembly().BasedOn<IRunAtStartUp>().Configure(s => s.Start()),
-                Classes.FromThisAssembly().Where(t => t.Name.EndsWith("Repository"))
+                Classes.FromThisAssembly().Where(t => t.Name.EndsWith("Repository")),
+                Classes.FromThisAssembly().Where(t => t.Name.EndsWith("Service"))
             );
         }
     }
