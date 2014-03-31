@@ -50,7 +50,11 @@ namespace OpenHomeServer.Server.Plugins.Ripper
                         using (var lame = new LameMp3Encoder(new EncoderSettings
                         {
                             Track = single.Tracks.Single(t => t.TrackNumber == track.TrackNumber),
-                            OutputFile = @"C:\Users\lodesioe\Desktop\encoding\OpenHomeserverRipping\track" + track.TrackNumber.ToString("##") + ".mp3"
+                            Output = new OutputLocation
+                            {
+                                BaseDirectory = @"C:\Users\lodesioe\Desktop\encoding\OpenHomeserverRipping\",
+                                FileNameMask = "{albumartist}\\{albumtitle}\\{tracknumber}-{title}.mp3"
+                            }
                         }))
                         {
                             await reader.ReadTrack(track, lame.Write, (read, bytes) =>
