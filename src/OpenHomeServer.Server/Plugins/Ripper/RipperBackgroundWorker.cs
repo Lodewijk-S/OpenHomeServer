@@ -94,19 +94,13 @@ namespace OpenHomeServer.Server.Plugins.Ripper
                     switch (disc.DriveFormat)
                     {
                         case "CDFS":
-                            List<DiscIdentification> discIds;
+                            List<AlbumIdentification> discIds;
                             using (var drive = CdDrive.Create(disc))
                             {
                                 var tagSource = new MusicBrainzTagSource(new MusicBrainzApi("http://musicbrainz.org"));
                                 discIds = tagSource.GetTags(await drive.ReadTableOfContents()).ToList();
                             }
-                            if (discIds.Count == 0)
-                            {
-                                notificator.SendNotificationToAllClients(
-                                    new Notification(
-                                        "Disc inserted, but we could not determine the name of the disc :( "));
-                            }
-                            else if (discIds.Count == 1)
+                            if (discIds.Count == 1)
                             {
                                 notificator.SendNotificationToAllClients(
                                     new Notification("Disc inserted. We started ripping it now."));
@@ -133,7 +127,5 @@ namespace OpenHomeServer.Server.Plugins.Ripper
         {
             if (_observer != null) _observer.Dispose();
         }
-    }
-
-    
+    }    
 }

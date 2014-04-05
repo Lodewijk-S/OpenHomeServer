@@ -21,7 +21,7 @@ namespace OpenHomeServer.Server.Plugins.Ripper
             _cancellationTokenSource = new CancellationTokenSource();
         }
 
-        public void StartRipping(DriveInfo disc, DiscIdentification single)
+        public void StartRipping(DriveInfo disc, AlbumIdentification single)
         {
             _rippingStatus =RippingStatus.Busy;
             var rippingTask = new Task(() => DoRipping(disc, single), _cancellationTokenSource.Token, TaskCreationOptions.LongRunning);
@@ -39,7 +39,7 @@ namespace OpenHomeServer.Server.Plugins.Ripper
             return _rippingStatus;
         }
 
-        private async void DoRipping(DriveInfo disc, DiscIdentification single)
+        private async void DoRipping(DriveInfo disc, AlbumIdentification single)
         {
             using (var drive = CdDrive.Create(disc))
             {
