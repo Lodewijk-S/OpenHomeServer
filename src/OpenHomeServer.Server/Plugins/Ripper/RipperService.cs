@@ -23,8 +23,11 @@ namespace OpenHomeServer.Server.Plugins.Ripper
 
         public void StartRipping(DriveInfo disc, AlbumIdentification single)
         {
-            _rippingStatus =RippingStatus.Busy;
-            var rippingTask = new Task(() => DoRipping(disc, single), _cancellationTokenSource.Token, TaskCreationOptions.LongRunning);
+            var rippingTask = new Task(() => 
+            {
+                _rippingStatus = RippingStatus.Busy;
+                DoRipping(disc, single); 
+            }, _cancellationTokenSource.Token, TaskCreationOptions.LongRunning);
             rippingTask.ContinueWith(t => _rippingStatus = RippingStatus.Idle);
             rippingTask.Start();
         }
