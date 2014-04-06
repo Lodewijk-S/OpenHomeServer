@@ -46,6 +46,7 @@ namespace OpenHomeServer.Server
             catch (Exception e)
             {
                 logger.Error("Cannot start the application", e);
+                Console.ReadKey(); 
             }
         }        
     }
