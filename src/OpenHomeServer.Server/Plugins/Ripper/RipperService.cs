@@ -1,52 +1,29 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using CdRipper.Encode;
 using CdRipper.Rip;
 using CdRipper.Tagging;
-using OpenHomeServer.Server.Plugins.Notifications;
-using Microsoft.AspNet.SignalR;
-using Microsoft.AspNet.SignalR.Infrastructure;
-using System.Collections.Generic;
-using OpenHomeServer.Server.Messaging;
 
 namespace OpenHomeServer.Server.Plugins.Ripper
 {
-    public class RipperNotificationHub : Hub
-    {
-        public void UpdateRippingStatus(IEnumerable<TrackProgress> progress)
-        {
-            Clients.All.onRippingProgress(progress);
-        }
-    }
-
-    public class RipperNotificator
-    {
-        private readonly IHubContext _hubContext;
-
-        public RipperNotificator(IHubContextFactory hubContextFactory)
-        {
-            _hubContext = hubContextFactory.CreateHubContext<RipperNotificationHub>();
-        }
-
-        public void SendNotificationToAllClients(IEnumerable<TrackProgress> progress)
-        {
-            _hubContext.Clients.All.onRippingProgress(progress);
-        }
-    }
-
     public class TrackProgress
     {
         private int _percentageComplete;
 
-        public TrackProgress(int trackNumber, int percentageComplete)
+        public TrackProgress(TrackIdentification track)
         {
-            TrackNumber = trackNumber;
-            _percentageComplete = percentageComplete;
+            TrackNumber = track.TrackNumber;
+            Title = track.Title;
+            Artist = track.Artist;
+            _percentageComplete = 0;
         }
 
         public int TrackNumber { get; private set; }
+        public string Title { get; private set; }
+        public string Artist { get; private set; }
         public int PercentageComplete { get { return _percentageComplete; } }
 
         public void UpdatePercentageComplete(int percentage)
@@ -55,11 +32,26 @@ namespace OpenHomeServer.Server.Plugins.Ripper
         }
     }
 
+    public class AlbumProgress
+    {
+        public AlbumProgress(AlbumIdentification album)
+        {
+            AlbumArtist = album.AlbumArtist;
+            AlbumTitle = album.AlbumTitle;
+            Tracks = (from t in album.Tracks
+                      select new TrackProgress(t)).ToList();
+        }
+
+        public string AlbumTitle { get; private set; }
+        public string AlbumArtist { get; private set; }
+        public IEnumerable<TrackProgress> Tracks { get; private set; }
+    }
+
     public class RipperService
     {
         private readonly RipperNotificator _notificator;
         private readonly CancellationTokenSource _cancellationTokenSource;
-        private RippingStatus _rippingStatus = RippingStatus.Idle;
+        private AlbumProgress _currentStatus;
 
         public RipperService(RipperNotificator notificator)
         {
@@ -67,14 +59,19 @@ namespace OpenHomeServer.Server.Plugins.Ripper
             _cancellationTokenSource = new CancellationTokenSource();
         }
 
-        public void StartRipping(DriveInfo disc, AlbumIdentification single)
+        public void StartRipping(DriveInfo disc, AlbumIdentification album)
         {
-            var rippingTask = new Task(() => 
+            var rippingTask = new Task(async () => 
             {
-                _rippingStatus = RippingStatus.Busy;
-                DoRipping(disc, single); 
+                _currentStatus = new AlbumProgress(album);
+                _notificator.UpdateStatus(_currentStatus);
+                 await DoRipping(disc, album);
             }, _cancellationTokenSource.Token, TaskCreationOptions.LongRunning);
-            rippingTask.ContinueWith(t => _rippingStatus = RippingStatus.Idle);
+            rippingTask.ContinueWith(t =>
+            {
+                _currentStatus = null;
+                _notificator.UpdateStatus(_currentStatus);
+            });
             rippingTask.Start();
         }
 
@@ -83,19 +80,17 @@ namespace OpenHomeServer.Server.Plugins.Ripper
             _cancellationTokenSource.Cancel();
         }
 
-        public RippingStatus GetCurrentStatus()
+        public AlbumProgress GetCurrentStatus()
         {
-            return _rippingStatus;
+            return _currentStatus;
         }
 
-        private async void DoRipping(DriveInfo disc, AlbumIdentification single)
+        private async Task DoRipping(DriveInfo disc, AlbumIdentification single)
         {
             using (var drive = CdDrive.Create(disc))
             {
                 var toc = await drive.ReadTableOfContents();
-                var listOfTracks = (from i in Enumerable.Range(1, toc.Tracks.Count())
-                                   select new TrackProgress(i, 0)).ToArray();
-
+                
                 foreach (var track in toc.Tracks)
                 {
                     var currentTrackNumber = track.TrackNumber;
@@ -114,21 +109,14 @@ namespace OpenHomeServer.Server.Plugins.Ripper
                         {
                             await reader.ReadTrack(track, lame.Write, (read, bytes) =>
                             {
-                                listOfTracks[currentTrackNumber-1].UpdatePercentageComplete((int)(read/bytes)*100);
-                                _notificator.SendNotificationToAllClients(listOfTracks);
+                                var percentageComplete = (int) (read/bytes)*100;
+                                _currentStatus.Tracks.ElementAt(currentTrackNumber-1).UpdatePercentageComplete(percentageComplete);
+                                _notificator.UpdateProgress(currentTrackNumber, percentageComplete);
                             });
                         }
                     }
                 }
             }
         }
-    }
-
-    public enum RippingStatus
-    {
-        Idle,
-        Busy,
-        Canceled,
-        Faulted
     }
 }

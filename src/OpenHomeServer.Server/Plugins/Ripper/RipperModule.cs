@@ -1,4 +1,5 @@
 ﻿using Nancy;
+using Newtonsoft.Json;
 
 namespace OpenHomeServer.Server.Plugins.Ripper
 {
@@ -12,10 +13,12 @@ namespace OpenHomeServer.Server.Plugins.Ripper
 
         private RipperViewModel GetRipperViewModel(RipperService service)
         {
+            var status = service.GetCurrentStatus();
+
             return new RipperViewModel
             {
                 Title="Ripper",
-                Status = service.GetCurrentStatus()
+                View = status == null ? "null" : JsonConvert.SerializeObject(status)
             };
         }
     }
@@ -23,6 +26,6 @@ namespace OpenHomeServer.Server.Plugins.Ripper
     public class RipperViewModel
     {
         public string Title { get; set; }
-        public RippingStatus Status { get; set; }
+        public string View { get; set; }
     }
 }

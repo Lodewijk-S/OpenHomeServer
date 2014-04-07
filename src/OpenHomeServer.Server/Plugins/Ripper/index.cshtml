@@ -2,7 +2,58 @@
 	Layout = "layout.cshtml";
 }
 @section Javascript {
+    <script>
+        $(function() {
+            function ripperViewModel() {
+                var self = this;
+                self.progress = @Html.Raw(Model.View);
+
+                self.isRipping = ko.computed(function() {
+                    return self.progress != null;
+                });
+
+                self.onRippingProgress = function(trackNumber, percentageComplete) {
+                    self.progress.Tracks[trackNumber - 1].PercentageComplete = percentageComplete;
+                };
+
+                self.onStatusChanged = function(currentStatus) {
+                    self.progress = currentStatus;
+                };
+            }
+
+            var viewModel = new ripperViewModel();
+            ko.applyBindings(viewModel);
+
+            var ripperHub = $.connection.ripperNotificationHub;
+            ripperHub.onRippingProgress = viewModel.onRippingProgress;
+            ripperHub.onStatusChanged = viewModel.onStatusChanged;
+            $.connection.hub.start();
+        });
+    </script>
 }
 Ripper!<br />
 
-Current Status: @Model.Status
+<div data-bind="if: isRipping">
+    <p>Current CD: <strong data-bind="text: progress.AlbumTitle"></strong> by <strong data-bind="text: progress.AlbumArtist"></strong></p>
+    <table>
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Artist</th>
+                <th>Title</th>
+                <th>Progress</th>
+            </tr>
+        </thead>
+        <tbody data-bind="foreach: progress.Tracks">
+            <tr>
+                <td data-bind="text: TrackNumber"></td>
+                <td data-bind="text: Title"></td>
+                <td data-bind="text: Artist"></td>
+                <td data-bind="text: PercentageComplete"></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<div data-bind="ifnot: isRipping">
+    <p>No disc currently inserted</p>
+</div>

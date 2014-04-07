@@ -155,6 +155,7 @@
     <Compile Include="Plugins\PluginInstaller.cs" />
     <Compile Include="Plugins\Ripper\RipperModule.cs" />
     <Compile Include="Plugins\Ripper\RipperBackgroundWorker.cs" />
+    <Compile Include="Plugins\Ripper\RipperNotificationHub.cs" />
     <Compile Include="Plugins\Ripper\RipperService.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="Web\NancyBootstrapper.cs" />
@@ -207,7 +208,9 @@
       <Name>CdRipper</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="Web\Assets\Scripts\knockout-3.1.0.js" />
+  </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Web\Assets\Scripts\toastr.min.js" />
   </ItemGroup>
