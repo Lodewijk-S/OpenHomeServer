@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -11,7 +12,7 @@ namespace OpenHomeServer.Server.Plugins.Ripper
 {
     public class TrackProgress
     {
-        private int _percentageComplete;
+        private double _percentageComplete;
 
         public TrackProgress(TrackIdentification track)
         {
@@ -24,9 +25,9 @@ namespace OpenHomeServer.Server.Plugins.Ripper
         public int TrackNumber { get; private set; }
         public string Title { get; private set; }
         public string Artist { get; private set; }
-        public int PercentageComplete { get { return _percentageComplete; } }
+        public double PercentageComplete { get { return _percentageComplete; } }
 
-        public void UpdatePercentageComplete(int percentage)
+        public void UpdatePercentageComplete(double percentage)
         {
             Interlocked.Exchange(ref _percentageComplete, percentage);
         }
@@ -61,11 +62,11 @@ namespace OpenHomeServer.Server.Plugins.Ripper
 
         public void StartRipping(DriveInfo disc, AlbumIdentification album)
         {
-            var rippingTask = new Task(async () => 
+            var rippingTask = new Task(() => 
             {
                 _currentStatus = new AlbumProgress(album);
                 _notificator.UpdateStatus(_currentStatus);
-                 await DoRipping(disc, album);
+                DoRipping(disc, album).Wait();
             }, _cancellationTokenSource.Token, TaskCreationOptions.LongRunning);
             rippingTask.ContinueWith(t =>
             {
@@ -109,7 +110,7 @@ namespace OpenHomeServer.Server.Plugins.Ripper
                         {
                             await reader.ReadTrack(track, lame.Write, (read, bytes) =>
                             {
-                                var percentageComplete = (int) (read/bytes)*100;
+                                var percentageComplete = Math.Round(((double)read/(double)bytes)*100d, 0);
                                 _currentStatus.Tracks.ElementAt(currentTrackNumber-1).UpdatePercentageComplete(percentageComplete);
                                 _notificator.UpdateProgress(currentTrackNumber, percentageComplete);
                             });

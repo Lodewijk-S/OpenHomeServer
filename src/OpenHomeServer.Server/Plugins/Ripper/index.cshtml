@@ -3,38 +3,64 @@
 }
 @section Javascript {
     <script>
-        $(function() {
-            function ripperViewModel() {
-                var self = this;
-                self.progress = @Html.Raw(Model.View);
-
-                self.isRipping = ko.computed(function() {
-                    return self.progress != null;
-                });
-
-                self.onRippingProgress = function(trackNumber, percentageComplete) {
-                    self.progress.Tracks[trackNumber - 1].PercentageComplete = percentageComplete;
-                };
-
-                self.onStatusChanged = function(currentStatus) {
-                    self.progress = currentStatus;
-                };
+        function ripperViewModel(progress) {
+            var self = this;
+            self.progress = ko.observable();
+            if (progress) {
+                self.progress(progress);
             }
 
-            var viewModel = new ripperViewModel();
+            self.isRipping = ko.computed(function() {
+                return self.progress() != null;
+            });
+
+            self.onRippingProgress = function(trackNumber, percentageComplete) {
+                self.progress().Tracks[trackNumber - 1].PercentageComplete(percentageComplete);
+            };
+
+            self.onStatusChanged = function(currentStatus) {
+                self.progress(currentStatus);
+            };
+        }
+
+        function progressViewModel(progress) {
+            var self = this;
+            self.AlbumTitle = progress.AlbumTitle;
+            self.AlbumArtist = progress.AlbumArtist;
+            self.Tracks = ko.observableArray();
+
+            for (var i = 0; i < progress.Tracks.length; i++) {
+                self.Tracks.push(new trackViewModel(progress.Tracks[i]));
+            }
+        }
+
+        function trackViewModel(track) {
+            var self = this;
+            self.TrackNumber = track.TrackNumber;
+            self.Title = track.Title;
+            self.Artist = track.Artist;
+            self.PercentageComplete = ko.observable(track.PercentageComplete);
+        }
+
+        var viewModel;
+
+        $(function() {
+            viewModel = new ripperViewModel(@Html.Raw(Model.View));
             ko.applyBindings(viewModel);
 
             var ripperHub = $.connection.ripperNotificationHub;
-            ripperHub.onRippingProgress = viewModel.onRippingProgress;
-            ripperHub.onStatusChanged = viewModel.onStatusChanged;
-            $.connection.hub.start();
+            ripperHub.client.onRippingProgress = viewModel.onRippingProgress;
+            ripperHub.client.onStatusChanged = viewModel.onStatusChanged;
+            $.connection.hub.start()
+                .done(function () { console.log('Now connected, connection ID=' + $.connection.hub.id); })
+                .fail(function () { console.log('Could not Connect!'); });;
         });
     </script>
 }
 Ripper!<br />
 
 <div data-bind="if: isRipping">
-    <p>Current CD: <strong data-bind="text: progress.AlbumTitle"></strong> by <strong data-bind="text: progress.AlbumArtist"></strong></p>
+    <p>Current CD: <strong data-bind="text: progress().AlbumTitle"></strong> by <strong data-bind="text: progress().AlbumArtist"></strong></p>
     <table>
         <thead>
             <tr>
@@ -44,11 +70,11 @@ Ripper!<br />
                 <th>Progress</th>
             </tr>
         </thead>
-        <tbody data-bind="foreach: progress.Tracks">
+        <tbody data-bind="foreach: progress().Tracks">
             <tr>
                 <td data-bind="text: TrackNumber"></td>
-                <td data-bind="text: Title"></td>
                 <td data-bind="text: Artist"></td>
+                <td data-bind="text: Title"></td>
                 <td data-bind="text: PercentageComplete"></td>
             </tr>
         </tbody>

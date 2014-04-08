@@ -17,7 +17,7 @@ namespace OpenHomeServer.Server.Plugins.Ripper
             _hubContext = hubContextFactory.CreateHubContext<RipperNotificationHub>();
         }
 
-        public void UpdateProgress(int trackNumber, int percentageComplete)
+        public void UpdateProgress(int trackNumber, double percentageComplete)
         {
             _hubContext.Clients.All.onRippingProgress(trackNumber, percentageComplete);
         }
