@@ -64,9 +64,16 @@ namespace OpenHomeServer.Server.Plugins.Ripper
         {
             var rippingTask = new Task(() => 
             {
-                _currentStatus = new AlbumProgress(album);
-                _notificator.UpdateStatus(_currentStatus);
-                DoRipping(disc, album).Wait();
+                try
+                {
+                    _currentStatus = new AlbumProgress(album);
+                    _notificator.UpdateStatus(_currentStatus);
+                    DoRipping(disc, album).Wait();
+                }
+                catch (Exception e)
+                {
+                    throw e;
+                }
             }, _cancellationTokenSource.Token, TaskCreationOptions.LongRunning);
             rippingTask.ContinueWith(t =>
             {
@@ -103,7 +110,7 @@ namespace OpenHomeServer.Server.Plugins.Ripper
                             Track = single.Tracks.Single(t => t.TrackNumber == track.TrackNumber),
                             Output = new OutputLocation
                             {
-                                BaseDirectory = @"C:\Users\lodesioe\Desktop\encoding\OpenHomeserverRipping\",
+                                BaseDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), @"encoding\OpenHomeserverRipping\"),
                                 FileNameMask = "{albumartist}\\{albumtitle}\\{tracknumber}-{title}.mp3"
                             }
                         }))
