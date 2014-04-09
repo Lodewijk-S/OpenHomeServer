@@ -15,11 +15,30 @@
             });
 
             self.onRippingProgress = function(trackNumber, percentageComplete) {
-                self.progress().Tracks[trackNumber - 1].PercentageComplete(percentageComplete);
+                self.progress().Tracks()[trackNumber - 1].PercentageComplete(percentageComplete);
             };
 
             self.onStatusChanged = function(currentStatus) {
-                self.progress(currentStatus);
+                if (currentStatus) {
+                    self.progress(new progressViewModel(currentStatus));
+                } else {
+                    self.progress(null);
+                }
+            };
+
+            self.onSetTestData = function() {
+                self.onStatusChanged({
+                    AlbumTitle: "Title",
+                    AlbumArtist: "Artist",
+                    Tracks: [
+                        {
+                            TrackNumber: 1,
+                            Title: "track 1",
+                            Artist: "Artist",
+                            PercentageComplete: 0
+                        }
+                    ]
+                });
             };
         }
 
@@ -52,8 +71,8 @@
             ripperHub.client.onRippingProgress = viewModel.onRippingProgress;
             ripperHub.client.onStatusChanged = viewModel.onStatusChanged;
             $.connection.hub.start()
-                .done(function () { console.log('Now connected, connection ID=' + $.connection.hub.id); })
-                .fail(function () { console.log('Could not Connect!'); });;
+                .done(function() { console.log('Now connected, connection ID=' + $.connection.hub.id); })
+                .fail(function() { console.log('Could not Connect!'); });;
         });
     </script>
 }
@@ -75,11 +94,16 @@ Ripper!<br />
                 <td data-bind="text: TrackNumber"></td>
                 <td data-bind="text: Artist"></td>
                 <td data-bind="text: Title"></td>
-                <td data-bind="text: PercentageComplete"></td>
+                <td style="border: 1px solid black;">
+                    <div style="background-color: greenyellow;" data-bind="text: PercentageComplete, style: {width: PercentageComplete() + '%' }"></div>
+                </td>
             </tr>
         </tbody>
     </table>
 </div>
 <div data-bind="ifnot: isRipping">
     <p>No disc currently inserted</p>
+</div>
+<div>
+    <button data-bind="click: onSetTestData">Add TestData</button>
 </div>
