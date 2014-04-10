@@ -37,7 +37,7 @@ namespace OpenHomeServer.Server.Plugins.Ripper
 
     public class DiscInsertedObservable : IObservable<DriveInfo>
     {
-        IList<DiscStatus> _status;
+        readonly IList<DiscStatus> _status;
 
         public DiscInsertedObservable()
         {

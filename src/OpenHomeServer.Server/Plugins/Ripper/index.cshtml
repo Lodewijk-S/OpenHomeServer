@@ -25,21 +25,6 @@
                     self.progress(null);
                 }
             };
-
-            self.onSetTestData = function() {
-                self.onStatusChanged({
-                    AlbumTitle: "Title",
-                    AlbumArtist: "Artist",
-                    Tracks: [
-                        {
-                            TrackNumber: 1,
-                            Title: "track 1",
-                            Artist: "Artist",
-                            PercentageComplete: 0
-                        }
-                    ]
-                });
-            };
         }
 
         function progressViewModel(progress) {
@@ -103,7 +88,4 @@ Ripper!<br />
 </div>
 <div data-bind="ifnot: isRipping">
     <p>No disc currently inserted</p>
-</div>
-<div>
-    <button data-bind="click: onSetTestData">Add TestData</button>
 </div>

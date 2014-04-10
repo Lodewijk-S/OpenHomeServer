@@ -92,37 +92,42 @@ namespace OpenHomeServer.Server.Plugins.Ripper
         {
             return _currentStatus;
         }
-
+        
         private async Task DoRipping(DriveInfo disc, AlbumIdentification single)
         {
             using (var drive = CdDrive.Create(disc))
             {
                 var toc = await drive.ReadTableOfContents();
-                
                 foreach (var track in toc.Tracks)
                 {
-                    var currentTrackNumber = track.TrackNumber;
+                    var trackid = single.Tracks.Single(t => t.TrackNumber == track.TrackNumber);
+                    await RipTrack(drive, track, trackid);
+                }
+            }
+        }
 
-                    using (var reader = new TrackReader(drive))
+        private async Task RipTrack(ICdDrive drive, Track track, TrackIdentification trackIdentification)
+        {
+            var currentTrackNumber = track.TrackNumber;
+
+            using (var reader = new TrackReader(drive))
+            {
+                using (var lame = new LameMp3Encoder(new EncoderSettings
+                {
+                    Track = trackIdentification,
+                    Output = new OutputLocation
                     {
-                        using (var lame = new LameMp3Encoder(new EncoderSettings
-                        {
-                            Track = single.Tracks.Single(t => t.TrackNumber == track.TrackNumber),
-                            Output = new OutputLocation
-                            {
-                                BaseDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), @"encoding\OpenHomeserverRipping\"),
-                                FileNameMask = "{albumartist}\\{albumtitle}\\{tracknumber}-{title}.mp3"
-                            }
-                        }))
-                        {
-                            await reader.ReadTrack(track, lame.Write, (read, bytes) =>
-                            {
-                                var percentageComplete = Math.Round(((double)read/(double)bytes)*100d, 0);
-                                _currentStatus.Tracks.ElementAt(currentTrackNumber-1).UpdatePercentageComplete(percentageComplete);
-                                _notificator.UpdateProgress(currentTrackNumber, percentageComplete);
-                            });
-                        }
+                        BaseDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), @"encoding\OpenHomeserverRipping\"),
+                        FileNameMask = "{albumartist}\\{albumtitle}\\{tracknumber}-{title}.mp3"
                     }
+                }))
+                {
+                    await reader.ReadTrack(track, lame.Write, (read, bytes) =>
+                    {
+                        var percentageComplete = Math.Round(((double)read / (double)bytes) * 100d, 0);
+                        _currentStatus.Tracks.ElementAt(currentTrackNumber - 1).UpdatePercentageComplete(percentageComplete);
+                        _notificator.UpdateProgress(currentTrackNumber, percentageComplete);
+                    });
                 }
             }
         }
