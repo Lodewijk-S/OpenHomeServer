@@ -25,6 +25,10 @@
                     self.progress(null);
                 }
             };
+
+			self.cancelRipping = function(){
+				$.post("ripper/cancel");
+			};
         }
 
         function progressViewModel(progress) {
@@ -85,6 +89,9 @@ Ripper!<br />
             </tr>
         </tbody>
     </table>
+	<div>
+		<button data-bind="click: cancelRipping">Cancel Ripping</button>
+	</div>
 </div>
 <div data-bind="ifnot: isRipping">
     <p>No disc currently inserted</p>

@@ -51,13 +51,12 @@ namespace OpenHomeServer.Server.Plugins.Ripper
     public class RipperService
     {
         private readonly RipperNotificator _notificator;
-        private readonly CancellationTokenSource _cancellationTokenSource;
+        private CancellationTokenSource _cancellationTokenSource;
         private AlbumProgress _currentStatus;
 
         public RipperService(RipperNotificator notificator)
         {
             _notificator = notificator;
-            _cancellationTokenSource = new CancellationTokenSource();
         }
 
         public void StartRipping(DriveInfo disc, AlbumIdentification album)
@@ -66,15 +65,16 @@ namespace OpenHomeServer.Server.Plugins.Ripper
             {
                 try
                 {
+                    _cancellationTokenSource = new CancellationTokenSource();
                     _currentStatus = new AlbumProgress(album);
                     _notificator.UpdateStatus(_currentStatus);
-                    DoRipping(disc, album).Wait();
+                    DoRipping(disc, album, _cancellationTokenSource.Token).Wait();
                 }
                 catch (Exception e)
                 {
                     throw e;
                 }
-            }, _cancellationTokenSource.Token, TaskCreationOptions.LongRunning);
+            }, TaskCreationOptions.LongRunning);
             rippingTask.ContinueWith(t =>
             {
                 _currentStatus = null;
@@ -85,7 +85,8 @@ namespace OpenHomeServer.Server.Plugins.Ripper
 
         public void CancelRipping()
         {
-            _cancellationTokenSource.Cancel();
+            if(_cancellationTokenSource != null)
+                _cancellationTokenSource.Cancel();
         }
 
         public AlbumProgress GetCurrentStatus()
@@ -93,20 +94,23 @@ namespace OpenHomeServer.Server.Plugins.Ripper
             return _currentStatus;
         }
         
-        private async Task DoRipping(DriveInfo disc, AlbumIdentification single)
+        private async Task DoRipping(DriveInfo disc, AlbumIdentification single, CancellationToken token)
         {
             using (var drive = CdDrive.Create(disc))
             {
                 var toc = await drive.ReadTableOfContents();
                 foreach (var track in toc.Tracks)
                 {
+                    if (token.IsCancellationRequested)
+                        return;
+
                     var trackid = single.Tracks.Single(t => t.TrackNumber == track.TrackNumber);
-                    await RipTrack(drive, track, trackid);
+                    await RipTrack(drive, track, trackid, token);
                 }
             }
         }
 
-        private async Task RipTrack(ICdDrive drive, Track track, TrackIdentification trackIdentification)
+        private async Task RipTrack(ICdDrive drive, Track track, TrackIdentification trackIdentification, CancellationToken token)
         {
             var currentTrackNumber = track.TrackNumber;
 
@@ -127,7 +131,7 @@ namespace OpenHomeServer.Server.Plugins.Ripper
                         var percentageComplete = Math.Round(((double)read / (double)bytes) * 100d, 0);
                         _currentStatus.Tracks.ElementAt(currentTrackNumber - 1).UpdatePercentageComplete(percentageComplete);
                         _notificator.UpdateProgress(currentTrackNumber, percentageComplete);
-                    });
+                    }, token);
                 }
             }
         }

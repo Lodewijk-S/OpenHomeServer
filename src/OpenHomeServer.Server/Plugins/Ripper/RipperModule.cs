@@ -9,6 +9,11 @@ namespace OpenHomeServer.Server.Plugins.Ripper
             : base("ripper")
         {
             Get["/"] = x => View["index.cshtml", GetRipperViewModel(service)];
+            Post["/Cancel"] = x => 
+            {
+                service.CancelRipping();
+                return "ok";
+            };
         }
 
         private RipperViewModel GetRipperViewModel(RipperService service)
