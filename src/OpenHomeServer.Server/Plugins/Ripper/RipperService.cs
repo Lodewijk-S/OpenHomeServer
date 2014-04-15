@@ -107,6 +107,7 @@ namespace OpenHomeServer.Server.Plugins.Ripper
                     var trackid = single.Tracks.Single(t => t.TrackNumber == track.TrackNumber);
                     await RipTrack(drive, track, trackid, token);
                 }
+                await drive.Eject();
             }
         }
 
