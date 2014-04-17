@@ -1,26 +1,31 @@
 ﻿<!DOCTYPE html>
 
-<html>
+<html lang="en">
 	<head>
-	    <title>@(Model != null ? Model.Title ?? "OpenHomeserver Plugin" : "OpenHomeserver Plugin")</title>
-        <link type="text/css" rel="stylesheet" href="/Assets/Styles/toastr.min.css" />
-        @RenderSection("Styles", false)
-        <script type="text/javascript" src="/Assets/Scripts/jquery-2.1.0.min.js"></script>
-	    <script type="text/javascript" src="/Assets/Scripts/jquery.signalR-2.0.1.min.js"></script>
-        <script type="text/javascript" src="/Assets/Scripts/knockout-3.1.0.js"></script>
-        <script type="text/javascript" src="/Assets/Scripts/toastr.min.js"></script>
-        <script type="text/javascript" src="signalr/hubs"></script>
-        <script type="text/javascript" src="/Assets/Scripts/OpenHomeServer.js"></script>
-    </head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@(Model != null ? Model.Title ?? "OpenHomeserver Plugin" : "OpenHomeserver Plugin")</title>
+    <link type="text/css" rel="stylesheet" href="/Assets/Styles/bootstrap.min.css" />
+    <link type="text/css" rel="stylesheet" href="/Assets/Styles/toastr.min.css" />
+    @RenderSection("Styles", false)
+  </head>
 	<body>
-        @RenderBody()
-
-        @RenderSection("Javascript", false)
-	    <script type="text/javascript">
-        var openHomeServer;
-        $(function(){
-	          openHomeServer = new openHomeServer();
-         });
-    	</script>
+    @RenderBody()
+    
+    <script type="text/javascript" src="/Assets/Scripts/jquery-2.1.0.min.js"></script>
+    <script type="text/javascript" src="/Assets/Scripts/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/Assets/Scripts/jquery.signalR-2.0.1.min.js"></script>
+    <script type="text/javascript" src="/Assets/Scripts/knockout-3.1.0.js"></script>
+    <script type="text/javascript" src="/Assets/Scripts/toastr.min.js"></script>
+    <script type="text/javascript" src="/Assets/Scripts/OpenHomeServer.js"></script>
+    <script type="text/javascript" src="signalr/hubs"></script>
+    @RenderSection("Javascript", false)
+	  <script type="text/javascript">
+      var openHomeServer;
+      $(function(){
+	      openHomeServer = new openHomeServer();
+      });
+    </script>
   </body>
 </html>

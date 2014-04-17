@@ -177,6 +177,11 @@
     <EmbeddedResource Include="Web\Assets\Scripts\jquery-2.1.0.min.map" />
     <EmbeddedResource Include="Plugins\Ripper\index.cshtml" />
     <EmbeddedResource Include="Plugins\Notification\index.cshtml" />
+    <EmbeddedResource Include="Web\Assets\Fonts\glyphicons-halflings-regular.eot" />
+    <EmbeddedResource Include="Web\Assets\Fonts\glyphicons-halflings-regular.ttf" />
+    <EmbeddedResource Include="Web\Assets\Fonts\glyphicons-halflings-regular.woff" />
+    <EmbeddedResource Include="Web\Assets\Styles\bootstrap-theme.css.map" />
+    <EmbeddedResource Include="Web\Assets\Styles\bootstrap.css.map" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.5">
@@ -219,6 +224,15 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Web\Assets\Scripts\OpenHomeServer.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Web\Assets\Fonts\glyphicons-halflings-regular.svg" />
+    <EmbeddedResource Include="Web\Assets\Scripts\bootstrap.js" />
+    <EmbeddedResource Include="Web\Assets\Scripts\bootstrap.min.js" />
+    <EmbeddedResource Include="Web\Assets\Styles\bootstrap-theme.css" />
+    <EmbeddedResource Include="Web\Assets\Styles\bootstrap-theme.min.css" />
+    <EmbeddedResource Include="Web\Assets\Styles\bootstrap.css" />
+    <EmbeddedResource Include="Web\Assets\Styles\bootstrap.min.css" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
