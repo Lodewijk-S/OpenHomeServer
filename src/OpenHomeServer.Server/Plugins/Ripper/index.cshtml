@@ -67,16 +67,16 @@
 }
     <div class="panel panel-default">
         <div class="panel-heading">Current Status</div>
-        <div data-bind="ifnot: isRipping" class="panel-body">
+        <div data-bind="visible: isRipping() != true" class="panel-body">
             <p>No disc currently inserted</p>
         </div>
-        <div data-bind="if: isRipping" class="panel-body">
+        <div data-bind="visible: isRipping, if: isRipping" class="panel-body">
             <p>Current CD: <strong data-bind="text: progress().AlbumTitle"></strong> by <strong data-bind="text: progress().AlbumArtist"></strong></p>
             <p>
                 <button data-bind="click: cancelRipping" type="button" class="btn btn-danger">Cancel Ripping</button>
             </p>
         </div>
-        <table data-bind="with: progress()" class="table">
+        <table data-bind="with: progress" class="table">
             <thead>
                 <tr>
                     <th>#</th>
