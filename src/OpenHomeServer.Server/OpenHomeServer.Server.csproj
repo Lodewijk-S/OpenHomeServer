@@ -234,6 +234,9 @@
     <EmbeddedResource Include="Web\Assets\Styles\bootstrap.css" />
     <EmbeddedResource Include="Web\Assets\Styles\bootstrap.min.css" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Web\Assets\Styles\openhomeserver.css" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>

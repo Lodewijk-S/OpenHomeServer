@@ -7,7 +7,7 @@
             var self = this;
             self.progress = ko.observable();
             if (progress) {
-                self.progress(progress);
+                self.progress(new progressViewModel(progress));
             }
 
             self.isRipping = ko.computed(function() {
@@ -65,34 +65,39 @@
         });
     </script>
 }
-Ripper!<br />
-
-<div data-bind="if: isRipping">
-    <p>Current CD: <strong data-bind="text: progress().AlbumTitle"></strong> by <strong data-bind="text: progress().AlbumArtist"></strong></p>
-    <table>
-        <thead>
-            <tr>
-                <th>#</th>
-                <th>Artist</th>
-                <th>Title</th>
-                <th>Progress</th>
-            </tr>
-        </thead>
-        <tbody data-bind="foreach: progress().Tracks">
-            <tr>
-                <td data-bind="text: TrackNumber"></td>
-                <td data-bind="text: Artist"></td>
-                <td data-bind="text: Title"></td>
-                <td style="border: 1px solid black;">
-                    <div style="background-color: greenyellow;" data-bind="text: PercentageComplete, style: {width: PercentageComplete() + '%' }"></div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-	<div>
-		<button data-bind="click: cancelRipping">Cancel Ripping</button>
-	</div>
-</div>
-<div data-bind="ifnot: isRipping">
-    <p>No disc currently inserted</p>
-</div>
+    <div class="panel panel-default">
+        <div class="panel-heading">Current Status</div>
+        <div data-bind="ifnot: isRipping" class="panel-body">
+            <p>No disc currently inserted</p>
+        </div>
+        <div data-bind="if: isRipping" class="panel-body">
+            <p>Current CD: <strong data-bind="text: progress().AlbumTitle"></strong> by <strong data-bind="text: progress().AlbumArtist"></strong></p>
+            <p>
+                <button data-bind="click: cancelRipping" type="button" class="btn btn-danger">Cancel Ripping</button>
+            </p>
+        </div>
+        <table data-bind="with: progress()" class="table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Artist</th>
+                    <th>Title</th>
+                    <th>Progress</th>
+                </tr>
+            </thead>
+            <tbody data-bind="foreach: Tracks">
+                <tr>
+                    <td data-bind="text: TrackNumber"></td>
+                    <td data-bind="text: Artist"></td>
+                    <td data-bind="text: Title"></td>
+                    <td>
+                        <div class="progress">
+                            <div data-bind="style: { width: PercentageComplete() + '%' }, attr:{ 'aria-valuenow': PercentageComplete}" class="progress-bar progress-bar-success" role="progressbar" aria-valuemin="0" aria-valuemax="100" style="width: 45%">
+                                <span data-bind="text: PercentageComplete() + '%'" class="sr-only"></span>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>

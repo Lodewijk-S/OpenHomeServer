@@ -102,7 +102,7 @@ namespace OpenHomeServer.Server.Plugins.Ripper
                 foreach (var track in toc.Tracks)
                 {
                     if (token.IsCancellationRequested)
-                        return;
+                        break;
 
                     var trackid = single.Tracks.Single(t => t.TrackNumber == track.TrackNumber);
                     await RipTrack(drive, track, trackid, token);

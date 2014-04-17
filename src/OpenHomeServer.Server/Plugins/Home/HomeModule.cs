@@ -7,7 +7,7 @@ namespace OpenHomeServer.Server.Plugins.Home
     {
         public HomeModule(ServerInfoProvider provider)
         {
-            Get["/"] = x => View["index.cshtml", new { ServerInfo = provider.GetServerInfo(), Title = "TITLE" }];
+            Get["/"] = x => View["index.cshtml", new { ServerInfo = provider.GetServerInfo(), Title = "Welcome to your OpenHomeServer" }];
         }
     }
 }
