@@ -22,9 +22,9 @@ namespace OpenHomeServer.Server.Plugins.Ripper
             _hubContext.Clients.All.onRippingProgress(trackNumber, percentageComplete);
         }
 
-        public void UpdateStatus(AlbumProgress progress)
+        public void UpdateStatus(RippingStatus status)
         {
-            _hubContext.Clients.All.onStatusChanged(progress);
+            _hubContext.Clients.All.onStatusChanged(status);
         }
     }
 }

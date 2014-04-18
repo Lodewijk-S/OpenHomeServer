@@ -90,28 +90,11 @@ namespace OpenHomeServer.Server.Plugins.Ripper
             {
                 await Task.Run(async () =>
                 {
-                    //Todo: Rip CD
                     switch (disc.DriveFormat)
                     {
                         case "CDFS":
-                            List<AlbumIdentification> discIds;
-                            using (var drive = CdDrive.Create(disc))
-                            {
-                                var tagSource = new MusicBrainzTagSource(new MusicBrainzApi("http://musicbrainz.org"));
-                                discIds = tagSource.GetTags(await drive.ReadTableOfContents()).ToList();
-                            }
-                            if (discIds.Count == 1)
-                            {
-                                notificator.SendNotificationToAllClients(
-                                    new Notification("Disc inserted. We started ripping it now."));
-                                ripperService.StartRipping(disc, discIds.Single());
-                            }
-                            else
-                            {
-                                notificator.SendNotificationToAllClients(
-                                    new Notification("Disc inserted, but we found multiple matches for this disc."));
-                            }
-                            
+                            notificator.SendNotificationToAllClients(new Notification("Disc Inserted"));
+                            await ripperService.StartRipping(disc);
                             break;
                         case "UDF":
                             //this is a DVD or a BluRay disc
