@@ -157,6 +157,8 @@
     <Compile Include="Plugins\Ripper\RipperBackgroundWorker.cs" />
     <Compile Include="Plugins\Ripper\RipperNotificationHub.cs" />
     <Compile Include="Plugins\Ripper\RipperService.cs" />
+    <Compile Include="Plugins\Ripper\Domain\TrackProgress.cs" />
+    <Compile Include="Plugins\Ripper\Domain\RippingStatus.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="Web\NancyBootstrapper.cs" />
     <Compile Include="OpenHomeServerService.cs" />
@@ -237,6 +239,7 @@
   <ItemGroup>
     <EmbeddedResource Include="Web\Assets\Styles\openhomeserver.css" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>

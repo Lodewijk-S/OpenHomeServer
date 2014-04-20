@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -7,123 +6,80 @@ using System.Threading.Tasks;
 using CdRipper.Encode;
 using CdRipper.Rip;
 using CdRipper.Tagging;
+using OpenHomeServer.Server.Plugins.Notifications;
+using OpenHomeServer.Server.Plugins.Ripper.Domain;
 
 namespace OpenHomeServer.Server.Plugins.Ripper
 {
-    public class TrackProgress
-    {
-        private double _percentageComplete;
-
-        public TrackProgress(TrackIdentification track)
-        {
-            TrackNumber = track.TrackNumber;
-            Title = track.Title;
-            Artist = track.Artist;
-            _percentageComplete = 0;
-        }
-
-        public int TrackNumber { get; private set; }
-        public string Title { get; private set; }
-        public string Artist { get; private set; }
-        public double PercentageComplete { get { return _percentageComplete; } }
-
-        public void UpdatePercentageComplete(double percentage)
-        {
-            Interlocked.Exchange(ref _percentageComplete, percentage);
-        }
-    }
-
-    public class AlbumProgress
-    {
-        public AlbumProgress(AlbumIdentification album)
-        {
-            AlbumArtist = album.AlbumArtist;
-            AlbumTitle = album.AlbumTitle;
-            Tracks = (from t in album.Tracks
-                select new TrackProgress(t)).ToList();
-        }
-
-        public string AlbumTitle { get; private set; }
-        public string AlbumArtist { get; private set; }
-        public IEnumerable<TrackProgress> Tracks { get; private set; }
-    }
-
-    public class RippingStatus
-    {
-        public RippingStatus(IEnumerable<AlbumIdentification> identifiedAlbums)
-        {
-            AlbumIdentifications = identifiedAlbums.ToList();
-            if (AlbumIdentifications.Count() == 1)
-            {
-                SelectAlbum(AlbumIdentifications.First());
-            }
-        }
-
-        public AlbumProgress Progress { get; private set; }
-        public IEnumerable<AlbumIdentification> AlbumIdentifications { get; private set; }
-        public AlbumIdentification SelectedAlbum { get; private set; }
-
-        public bool CanRip{get { return Progress != null; }}
-
-        public void SelectAlbum(AlbumIdentification album)
-        {
-            SelectedAlbum = album;
-            Progress = new AlbumProgress(album);
-        }
-    }
-
     public class RipperService
     {
         private readonly RipperNotificator _notificator;
+        private readonly Notificator _mainNotificator;
+        private readonly ITagSource _tagSource;
+
         private CancellationTokenSource _cancellationTokenSource;
         private RippingStatus _currentStatus;
+        private Task _rippingTask;
 
-        public RipperService(RipperNotificator notificator)
+        public RipperService(RipperNotificator notificator, Notificator mainNotificator)
         {
             _notificator = notificator;
+            _mainNotificator = mainNotificator;
+            _tagSource = new MusicBrainzTagSource(new MusicBrainzApi("http://musicbrainz.org"));
         }
 
-        public async Task StartRipping(DriveInfo disc)
+        public async void OnDiscInsertion(DriveInfo drive, bool autoStart)
         {   
-            using (var drive = CdDrive.Create(disc))
+            using (var cdDrive = CdDrive.Create(drive))
             {
-                var tagSource = new MusicBrainzTagSource(new MusicBrainzApi("http://musicbrainz.org"));
-                var albums = tagSource.GetTags(await drive.ReadTableOfContents()).ToList();
-                _currentStatus = new RippingStatus(albums);
+                var albums = _tagSource.GetTags(await cdDrive.ReadTableOfContents()).ToList();
+                _currentStatus = new RippingStatus(drive, albums);
+                _notificator.UpdateStatus(_currentStatus);
             }
 
-            if (_currentStatus.CanRip)
+            if (_currentStatus.CanRip && autoStart)
             {
-                StartRipping(disc, _currentStatus.SelectedAlbum);
+                StartRipping(drive, _currentStatus.SelectedAlbum);
+                _mainNotificator.SendNotificationToAllClients(new Notification("Disc Inserted"));
+            }
+            else
+            {
+                _mainNotificator.SendNotificationToAllClients(new Notification("A disc has been inserted, but could not be unambigously identified. Please choose the correct album information on the Ripping page."));
             }
         }
 
-        private void StartRipping(DriveInfo disc, AlbumIdentification album)
+        public void StartRipping(DriveInfo drive, AlbumIdentification album)
         {
-            var rippingTask = new Task(() => 
+            if (IsRipping())
+            {
+                //Cannot start two ripping processes
+                return;
+            }
+
+            _rippingTask = new Task(() => 
             {
                 try
                 {
                     _cancellationTokenSource = new CancellationTokenSource();
                     _notificator.UpdateStatus(_currentStatus);
-                    DoRipping(disc, album, _cancellationTokenSource.Token).Wait();
+                    RipAlbum(drive, album, _cancellationTokenSource.Token).Wait();
                 }
                 catch (Exception e)
                 {
                     throw e;
                 }
             }, TaskCreationOptions.LongRunning);
-            rippingTask.ContinueWith(t =>
+            _rippingTask.ContinueWith(t =>
             {
                 _currentStatus = null;
                 _notificator.UpdateStatus(_currentStatus);
             });
-            rippingTask.Start();
+            _rippingTask.Start();
         }
 
         public void CancelRipping()
         {
-            if(_cancellationTokenSource != null)
+            if(_cancellationTokenSource != null && IsRipping())
                 _cancellationTokenSource.Cancel();
         }
 
@@ -131,29 +87,34 @@ namespace OpenHomeServer.Server.Plugins.Ripper
         {
             return _currentStatus;
         }
-        
-        private async Task DoRipping(DriveInfo disc, AlbumIdentification album, CancellationToken token)
+
+        private bool IsRipping()
         {
-            using (var drive = CdDrive.Create(disc))
+            return _rippingTask != null && (_rippingTask.IsCompleted == false || _rippingTask.Status == TaskStatus.Running || _rippingTask.Status == TaskStatus.WaitingToRun || _rippingTask.Status == TaskStatus.WaitingForActivation);
+        }
+
+        private async Task RipAlbum(DriveInfo drive, AlbumIdentification album, CancellationToken token)
+        {   
+            using (var cdDrive = CdDrive.Create(drive))
             {
-                var toc = await drive.ReadTableOfContents();
+                var toc = await cdDrive.ReadTableOfContents();
                 foreach (var track in toc.Tracks)
                 {
                     if (token.IsCancellationRequested)
                         break;
 
                     var trackid = album.Tracks.Single(t => t.TrackNumber == track.TrackNumber);
-                    await RipTrack(drive, track, trackid, token);
+                    await RipTrack(cdDrive, track, trackid, token);
                 }
-                await drive.Eject();
+                await cdDrive.Eject();
             }
         }
 
-        private async Task RipTrack(ICdDrive drive, Track track, TrackIdentification trackIdentification, CancellationToken token)
+        private async Task RipTrack(ICdDrive cdDrive, Track track, TrackIdentification trackIdentification, CancellationToken token)
         {
             var currentTrackNumber = track.TrackNumber;
 
-            using (var reader = new TrackReader(drive))
+            using (var reader = new TrackReader(cdDrive))
             {
                 using (var lame = new LameMp3Encoder(new EncoderSettings
                 {
@@ -168,7 +129,7 @@ namespace OpenHomeServer.Server.Plugins.Ripper
                     await reader.ReadTrack(track, lame.Write, (read, bytes) =>
                     {
                         var percentageComplete = Math.Round(((double)read / (double)bytes) * 100d, 0);
-                        _currentStatus.Progress.Tracks.ElementAt(currentTrackNumber - 1).UpdatePercentageComplete(percentageComplete);
+                        _currentStatus.Progress[currentTrackNumber].UpdatePercentageComplete(percentageComplete);
                         _notificator.UpdateProgress(currentTrackNumber, percentageComplete);
                     }, token);
                 }

@@ -84,17 +84,16 @@ namespace OpenHomeServer.Server.Plugins.Ripper
     {
         private readonly IDisposable _observer;
 
-        public RipperBackgroundWorker(Notificator notificator, RipperService ripperService)
+        public RipperBackgroundWorker(RipperService ripperService)
         {
             _observer = new DiscInsertedObservable().Subscribe(async disc =>
             {
-                await Task.Run(async () =>
+                await Task.Run(() =>
                 {
                     switch (disc.DriveFormat)
                     {
                         case "CDFS":
-                            notificator.SendNotificationToAllClients(new Notification("Disc Inserted"));
-                            await ripperService.StartRipping(disc);
+                            ripperService.OnDiscInsertion(disc, true);
                             break;
                         case "UDF":
                             //this is a DVD or a BluRay disc

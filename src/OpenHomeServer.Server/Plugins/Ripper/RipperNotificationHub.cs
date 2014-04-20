@@ -1,5 +1,6 @@
 using Microsoft.AspNet.SignalR;
 using OpenHomeServer.Server.Messaging;
+using OpenHomeServer.Server.Plugins.Ripper.Domain;
 
 namespace OpenHomeServer.Server.Plugins.Ripper
 {
