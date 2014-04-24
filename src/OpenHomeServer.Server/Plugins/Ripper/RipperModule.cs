@@ -1,4 +1,6 @@
 ﻿using Nancy;
+using Nancy.Extensions;
+using Nancy.Responses;
 using Newtonsoft.Json;
 
 namespace OpenHomeServer.Server.Plugins.Ripper
@@ -12,7 +14,11 @@ namespace OpenHomeServer.Server.Plugins.Ripper
             Post["/Cancel"] = x => 
             {
                 service.CancelRipping();
-                return "ok";
+                if (Context.IsAjaxRequest())
+                {
+                    return "ok";
+                } 
+                return new RedirectResponse(ModulePath);
             };
         }
 
