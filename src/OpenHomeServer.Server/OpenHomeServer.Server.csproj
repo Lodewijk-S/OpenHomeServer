@@ -159,6 +159,7 @@
     <Compile Include="Plugins\Ripper\RipperService.cs" />
     <Compile Include="Plugins\Ripper\Domain\TrackProgress.cs" />
     <Compile Include="Plugins\Ripper\Domain\RippingStatus.cs" />
+    <Compile Include="Plugins\Ripper\Domain\StatusTracker.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="Web\NancyBootstrapper.cs" />
     <Compile Include="OpenHomeServerService.cs" />

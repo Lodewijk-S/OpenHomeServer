@@ -3,51 +3,64 @@
 }
 @section Javascript {
     <script>
-        function ripperViewModel(progress) {
+        function ripperViewModel(status) {
             var self = this;
-            self.progress = ko.observable();
-            if (progress) {
-                self.progress(new progressViewModel(progress));
-            }
+            self.albums = ko.observableArray();
 
-            self.isRipping = ko.computed(function() {
-                return self.progress() != null;
+            self.isEmpty = ko.computed(function() {
+                return self.albums().length == 0;
+            });
+
+            self.needsAlbumChoice = ko.computed(function () {
+                return !self.isEmpty() && self.albums().length > 1;
+            });
+
+            self.canRip = ko.computed(function() {
+                return !self.isEmpty() && !self.needsAlbumChoice();
             });
 
             self.onRippingProgress = function(trackNumber, percentageComplete) {
-                self.progress().Tracks()[trackNumber - 1].PercentageComplete(percentageComplete);
+                self.albums()[0].tracks()[trackNumber - 1].percentageComplete(percentageComplete);
             };
 
-            self.onStatusChanged = function(currentStatus) {
-                if (currentStatus) {
-                    self.progress(new progressViewModel(currentStatus));
-                } else {
-                    self.progress(null);
+            self.onStatusChanged = function (currentStatus) {
+                self.albums.removeAll();
+                if (currentStatus.Albums) {
+                    for (var i = 0; i < currentStatus.Albums.length; i++) {
+                        self.albums.push(new albumViewModel(currentStatus.Albums[i]));
+                    }
                 }
             };
 
-			self.cancelRipping = function(){
-				$.post("ripper/cancel");
-			};
+            self.cancelRipping = function() {
+                $.post("ripper/cancel");
+            };
+
+            self.onStatusChanged(status);
         }
 
-        function progressViewModel(progress) {
+        function albumViewModel(album) {
             var self = this;
-            self.AlbumTitle = progress.AlbumTitle;
-            self.AlbumArtist = progress.AlbumArtist;
-            self.Tracks = ko.observableArray();
+            self.title = album.Title;
+            self.artist = album.Artist;
+            self.id = album.Id;
+            self.tracks = ko.observableArray();
 
-            for (var i = 0; i < progress.Tracks.length; i++) {
-                self.Tracks.push(new trackViewModel(progress.Tracks[i]));
+            for (var i = 0; i < album.Tracks.length; i++) {
+                self.tracks.push(new trackViewModel(album.Tracks[i]));
             }
+
+            self.selectAlbum = function () {
+                $.post("ripper/selectalbum", { albumId: self.id });
+            };
         }
 
         function trackViewModel(track) {
             var self = this;
-            self.TrackNumber = track.TrackNumber;
-            self.Title = track.Title;
-            self.Artist = track.Artist;
-            self.PercentageComplete = ko.observable(track.PercentageComplete);
+            self.trackNumber = track.TrackNumber;
+            self.title = track.Title;
+            self.artist = track.Artist;
+            self.percentageComplete = ko.observable(track.PercentageComplete);
         }
 
         var viewModel;
@@ -67,16 +80,40 @@
 }
     <div class="panel panel-default">
         <div class="panel-heading">Current Status</div>
-        <div data-bind="visible: isRipping() != true" class="panel-body">
+
+        <div data-bind="visible: isEmpty" class="panel-body">
             <p>No disc currently inserted</p>
         </div>
-        <div data-bind="visible: isRipping, if: isRipping" class="panel-body">
-            <p>Current CD: <strong data-bind="text: progress().AlbumTitle"></strong> by <strong data-bind="text: progress().AlbumArtist"></strong></p>
+
+        <div data-bind="visible: needsAlbumChoice, if: needsAlbumChoice" class="panel-body">
+            please select an album
+        </div>
+        <table data-bind="visible: needsAlbumChoice, if: needsAlbumChoice" class="table">
+            <thead>
+                <tr>
+                    <th>Artist</th>
+                    <th>Title</th>
+                    <th>&nbsp;</th>
+                </tr>
+            </thead>
+            <tbody data-bind="foreach: albums">
+                <tr>
+                    <td data-bind="text: artist"></td>
+                    <td data-bind="text: title"></td>
+                    <td>
+                        <button data-bind="click: selectAlbum">Rip as this album</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div data-bind="visible: canRip, if: canRip" class="panel-body">
+            <p>Current CD: <strong data-bind="text: albums()[0].title"></strong> by <strong data-bind="text: albums()[0].artist"></strong></p>
             <p>
                 <button data-bind="click: cancelRipping" type="button" class="btn btn-danger">Cancel Ripping</button>
             </p>
         </div>
-        <table data-bind="with: progress" class="table">
+        <table data-bind="if: canRip" class="table">
             <thead>
                 <tr>
                     <th>#</th>
@@ -85,19 +122,20 @@
                     <th>Progress</th>
                 </tr>
             </thead>
-            <tbody data-bind="foreach: Tracks">
+            <tbody data-bind="foreach: albums()[0].tracks">
                 <tr>
-                    <td data-bind="text: TrackNumber"></td>
-                    <td data-bind="text: Artist"></td>
-                    <td data-bind="text: Title"></td>
+                    <td data-bind="text: trackNumber"></td>
+                    <td data-bind="text: artist"></td>
+                    <td data-bind="text: title"></td>
                     <td>
                         <div class="progress">
-                            <div data-bind="style: { width: PercentageComplete() + '%' }, attr:{ 'aria-valuenow': PercentageComplete}" class="progress-bar progress-bar-success" role="progressbar" aria-valuemin="0" aria-valuemax="100" style="width: 45%">
-                                <span data-bind="text: PercentageComplete() + '%'" class="sr-only"></span>
+                            <div data-bind="style: { width: percentageComplete() + '%' }, attr:{ 'aria-valuenow': percentageComplete}" class="progress-bar progress-bar-success" role="progressbar" aria-valuemin="0" aria-valuemax="100" style="width: 45%">
+                                <span data-bind="text: percentageComplete() + '%'" class="sr-only"></span>
                             </div>
                         </div>
                     </td>
                 </tr>
             </tbody>
         </table>
+
     </div>

@@ -93,7 +93,7 @@ namespace OpenHomeServer.Server.Plugins.Ripper
                     switch (disc.DriveFormat)
                     {
                         case "CDFS":
-                            ripperService.OnDiscInsertion(disc, true);
+                            ripperService.OnDiscInsertion(disc);
                             break;
                         case "UDF":
                             //this is a DVD or a BluRay disc

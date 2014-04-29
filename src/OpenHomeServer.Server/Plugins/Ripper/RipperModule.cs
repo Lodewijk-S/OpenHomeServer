@@ -20,6 +20,16 @@ namespace OpenHomeServer.Server.Plugins.Ripper
                 } 
                 return new RedirectResponse(ModulePath);
             };
+            Post["/selectAlbum"] = x =>
+            {
+                service.SelectAlbum(Request.Form.albumId);
+
+                if (Context.IsAjaxRequest())
+                {
+                    return "ok";
+                }
+                return new RedirectResponse(ModulePath);
+            };
         }
 
         private RipperViewModel GetRipperViewModel(RipperService service)

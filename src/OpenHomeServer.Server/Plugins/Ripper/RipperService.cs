@@ -16,9 +16,9 @@ namespace OpenHomeServer.Server.Plugins.Ripper
         private readonly RipperNotificator _notificator;
         private readonly Notificator _mainNotificator;
         private readonly ITagSource _tagSource;
+        private readonly StatusTracker _tracker;
 
         private CancellationTokenSource _cancellationTokenSource;
-        private RippingStatus _currentStatus;
         private Task _rippingTask;
 
         public RipperService(RipperNotificator notificator, Notificator mainNotificator)
@@ -26,26 +26,37 @@ namespace OpenHomeServer.Server.Plugins.Ripper
             _notificator = notificator;
             _mainNotificator = mainNotificator;
             _tagSource = new MusicBrainzTagSource(new MusicBrainzApi("http://musicbrainz.org"));
+            _tracker = new StatusTracker();
+
+            _tracker.OnStatusUpdated += s => _notificator.UpdateStatus(s);
+            _tracker.OnRippingProgress += (t, p) => _notificator.UpdateProgress(t, p);
+
+            _tracker.OnDiscInserted += d => IdentifyAlbum(d, true);
+            _tracker.OnAlbumSelected += (d, a) => StartRipping(d, a);
         }
 
-        public async void OnDiscInsertion(DriveInfo drive, bool autoStart)
-        {   
+        public void OnDiscInsertion(DriveInfo drive)
+        {
+            _tracker.DiscInserted(drive);
+        }
+
+        public async void IdentifyAlbum(DriveInfo drive, bool autoStart)
+        {
             using (var cdDrive = CdDrive.Create(drive))
             {
                 var albums = _tagSource.GetTags(await cdDrive.ReadTableOfContents()).ToList();
-                _currentStatus = new RippingStatus(drive, albums);
-                _notificator.UpdateStatus(_currentStatus);
-            }
+                _tracker.AlbumsIdentified(albums);
 
-            if (_currentStatus.CanRip && autoStart)
-            {
-                StartRipping(drive, _currentStatus.SelectedAlbum);
-                _mainNotificator.SendNotificationToAllClients(new Notification("Disc Inserted"));
+                if (autoStart && albums.Count == 1)
+                {
+                    SelectAlbum(albums.Single().Id);
+                }
             }
-            else
-            {
-                _mainNotificator.SendNotificationToAllClients(new Notification("A disc has been inserted, but could not be unambigously identified. Please choose the correct album information on the Ripping page."));
-            }
+        }
+
+        public void SelectAlbum(string albumId)
+        {
+            _tracker.AlbumSelected(albumId);
         }
 
         public void StartRipping(DriveInfo drive, AlbumIdentification album)
@@ -61,7 +72,6 @@ namespace OpenHomeServer.Server.Plugins.Ripper
                 try
                 {
                     _cancellationTokenSource = new CancellationTokenSource();
-                    _notificator.UpdateStatus(_currentStatus);
                     RipAlbum(drive, album, _cancellationTokenSource.Token).Wait();
                 }
                 catch (Exception e)
@@ -71,21 +81,23 @@ namespace OpenHomeServer.Server.Plugins.Ripper
             }, TaskCreationOptions.LongRunning);
             _rippingTask.ContinueWith(t =>
             {
-                _currentStatus = null;
-                _notificator.UpdateStatus(_currentStatus);
+                _tracker.Clear();
             });
             _rippingTask.Start();
         }
 
         public void CancelRipping()
         {
-            if(_cancellationTokenSource != null && IsRipping())
+            if (_cancellationTokenSource != null && IsRipping())
+            {
                 _cancellationTokenSource.Cancel();
+                _tracker.Clear();
+            }
         }
 
-        public RippingStatus GetCurrentStatus()
+        public RippingStatusViewModel GetCurrentStatus()
         {
-            return _currentStatus;
+            return _tracker.GetStatus();
         }
 
         private bool IsRipping()
@@ -129,8 +141,7 @@ namespace OpenHomeServer.Server.Plugins.Ripper
                     await reader.ReadTrack(track, lame.Write, (read, bytes) =>
                     {
                         var percentageComplete = Math.Round(((double)read / (double)bytes) * 100d, 0);
-                        _currentStatus.Progress[currentTrackNumber].UpdatePercentageComplete(percentageComplete);
-                        _notificator.UpdateProgress(currentTrackNumber, percentageComplete);
+                        _tracker.RippingProgress(currentTrackNumber, percentageComplete);
                     }, token);
                 }
             }

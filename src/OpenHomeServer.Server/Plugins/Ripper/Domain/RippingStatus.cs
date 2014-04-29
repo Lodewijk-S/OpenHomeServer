@@ -1,35 +1,61 @@
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using CdRipper.Tagging;
 
 namespace OpenHomeServer.Server.Plugins.Ripper.Domain
 {
-    public class RippingStatus
+    public class RippingStatusViewModel
     {
-        public string DriveName { get; private set; }
-        public IDictionary<int, TrackProgress> Progress { get; private set; }
-        public IDictionary<string, AlbumIdentification> AlbumIdentifications { get; private set; }
-        public AlbumIdentification SelectedAlbum { get; private set; }
-
-        public RippingStatus(DriveInfo drive, IEnumerable<AlbumIdentification> identifiedAlbums)
+        public RippingStatusViewModel(IEnumerable<AlbumIdentification> albums)
         {
-            DriveName = drive.Name;
-            AlbumIdentifications = identifiedAlbums.ToDictionary(a => a.Id);
+            Albums = (from a in albums ?? Enumerable.Empty<AlbumIdentification>()
+                let tacks = from t in a.Tracks
+                                  select new TrackStatusViewModel(t.Title, t.Artist, t.TrackNumber, 0)
+                      select new AlbumStatusViewModel(a.AlbumTitle, a.AlbumArtist, tacks.ToList())).ToList();
+        }
 
-            if (AlbumIdentifications.Count() == 1)
+        public RippingStatusViewModel(AlbumIdentification album, IEnumerable<TrackProgress> progress)
+        {
+            var tracks = from t in album != null ? album.Tracks : Enumerable.Empty<TrackIdentification>()
+                         let pc = progress.First(p => p.TrackNumber == t.TrackNumber).PercentageComplete
+                         select new TrackStatusViewModel(t.Title, t.Artist, t.TrackNumber, pc);
+
+            Albums = album == null ? null : new[]
             {
-                SelectAlbum(AlbumIdentifications.Keys.First());
-            }
+                new AlbumStatusViewModel(album.AlbumTitle, album.AlbumArtist, tracks.ToList()) 
+            };
         }
 
-        public bool CanRip { get { return SelectedAlbum != null; } }
+        public IEnumerable<AlbumStatusViewModel> Albums { get; private set; }
+    }
 
-        public void SelectAlbum(string albumId)
-        {   
-            SelectedAlbum = AlbumIdentifications[albumId];
-            Progress = (from track in SelectedAlbum.Tracks
-                        select new TrackProgress(track.TrackNumber)).ToDictionary(t => t.TrackNumber);
+    public class AlbumStatusViewModel
+    {
+        public AlbumStatusViewModel(string title, string artist, IEnumerable<TrackStatusViewModel> tracks)
+        {
+            Tracks = tracks;
+            Artist = artist;
+            Title = title;
         }
+
+        public string Title { get; private set; }
+        public string Artist { get; private set; }
+        public IEnumerable<TrackStatusViewModel> Tracks { get; private set; }
+    }
+
+    public class TrackStatusViewModel
+    {
+        public TrackStatusViewModel(string title, string artist, int trackNumber, double percentageComplete)
+        {
+            PercentageComplete = percentageComplete;
+            TrackNumber = trackNumber;
+            Artist = artist;
+            Title = title;
+        }
+
+        public string Title { get; private set; }
+        public string Artist { get; private set; }
+        public int TrackNumber { get; private set; }
+        public double PercentageComplete { get; private set; }
     }
 }
