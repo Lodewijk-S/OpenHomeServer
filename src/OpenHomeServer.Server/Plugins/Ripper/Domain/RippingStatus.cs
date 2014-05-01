@@ -11,7 +11,7 @@ namespace OpenHomeServer.Server.Plugins.Ripper.Domain
             Albums = (from a in albums ?? Enumerable.Empty<AlbumIdentification>()
                 let tacks = from t in a.Tracks
                                   select new TrackStatusViewModel(t.Title, t.Artist, t.TrackNumber, 0)
-                      select new AlbumStatusViewModel(a.AlbumTitle, a.AlbumArtist, tacks.ToList())).ToList();
+                      select new AlbumStatusViewModel(a.Id, a.AlbumTitle, a.AlbumArtist, tacks.ToList())).ToList();
         }
 
         public RippingStatusViewModel(AlbumIdentification album, IEnumerable<TrackProgress> progress)
@@ -22,7 +22,7 @@ namespace OpenHomeServer.Server.Plugins.Ripper.Domain
 
             Albums = album == null ? null : new[]
             {
-                new AlbumStatusViewModel(album.AlbumTitle, album.AlbumArtist, tracks.ToList()) 
+                new AlbumStatusViewModel(album.Id, album.AlbumTitle, album.AlbumArtist, tracks.ToList()) 
             };
         }
 
@@ -31,13 +31,15 @@ namespace OpenHomeServer.Server.Plugins.Ripper.Domain
 
     public class AlbumStatusViewModel
     {
-        public AlbumStatusViewModel(string title, string artist, IEnumerable<TrackStatusViewModel> tracks)
+        public AlbumStatusViewModel(string id, string title, string artist, IEnumerable<TrackStatusViewModel> tracks)
         {
+            Id = id;
             Tracks = tracks;
             Artist = artist;
             Title = title;
         }
 
+        public string Id { get; private set; }
         public string Title { get; private set; }
         public string Artist { get; private set; }
         public IEnumerable<TrackStatusViewModel> Tracks { get; private set; }
