@@ -138,11 +138,12 @@ namespace OpenHomeServer.Server.Plugins.Ripper
                     }
                 }))
                 {
-                    await reader.ReadTrack(track, lame.Write, (read, bytes) =>
+                    reader.Progress += (read, bytes) =>
                     {
-                        var percentageComplete = Math.Round(((double)read / (double)bytes) * 100d, 0);
+                        var percentageComplete = Math.Round(((double) read/(double) bytes)*100d, 0);
                         _tracker.RippingProgress(currentTrackNumber, percentageComplete);
-                    }, token);
+                    };
+                    await reader.ReadTrack(track, lame.Write, token);
                 }
             }
         }
