@@ -22,24 +22,24 @@ namespace OpenHomeServer.Server.Plugins.Ripper
             _isInserted = drive.IsReady;
         }
 
-        public bool IsInserted(DriveInfo newStatus)
+        public bool HasChanged(DriveInfo newStatus)
         {
             if (newStatus.Name != Name)
             {
                 throw new InvalidOperationException("Drives do not match");
             }
 
-            var hasChanged = _isInserted != newStatus.IsReady && newStatus.IsReady;
+            var hasChanged = _isInserted != newStatus.IsReady;
             _isInserted = newStatus.IsReady;
             return hasChanged;
         }
     }
 
-    public class DiscInsertedObservable : IObservable<DriveInfo>
+    public class DiscChangeObservable : IObservable<DriveInfo>
     {
         readonly IList<DiscStatus> _status;
 
-        public DiscInsertedObservable()
+        public DiscChangeObservable()
         {
             _status = (from d in DriveInfo.GetDrives()
                        where d.DriveType == DriveType.CDRom
@@ -60,7 +60,7 @@ namespace OpenHomeServer.Server.Plugins.Ripper
                         var disc = (from d in DriveInfo.GetDrives()
                                     where d.DriveType == DriveType.CDRom
                                     join s in _status on d.Name equals s.Name
-                                    where s.IsInserted(d)
+                                    where s.HasChanged(d)
                                     select d).FirstOrDefault();
 
                         if (disc != null)
@@ -86,22 +86,29 @@ namespace OpenHomeServer.Server.Plugins.Ripper
 
         public RipperBackgroundWorker(RipperService ripperService)
         {
-            _observer = new DiscInsertedObservable().Subscribe(async disc =>
+            _observer = new DiscChangeObservable().Subscribe(async disc =>
             {
                 await Task.Run(() =>
                 {
-                    switch (disc.DriveFormat)
+                    if (disc.IsReady)
                     {
-                        case "CDFS":
-                            ripperService.OnDiscInsertion(disc);
-                            break;
-                        case "UDF":
-                            //this is a DVD or a BluRay disc
-                            break;
-                        default:
-                            break;
+                        switch (disc.DriveFormat)
+                        {
+                            case "CDFS":
+                                ripperService.OnDiscInsertion(disc);
+                                break;
+                            case "UDF":
+                                //this is a DVD or a BluRay disc
+                                break;
+                            default:
+                                break;
+                        }
                     }
-                });
+                    else
+                    {
+                        ripperService.OnDiscEjected(disc);
+                    }
+                });                    
             });
         }
 

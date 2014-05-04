@@ -40,6 +40,11 @@ namespace OpenHomeServer.Server.Plugins.Ripper
             _tracker.DiscInserted(drive);
         }
 
+        public void OnDiscEjected(DriveInfo drive)
+        {
+            _tracker.Clear();
+        }
+
         public async void IdentifyAlbum(DriveInfo drive, bool autoStart)
         {
             using (var cdDrive = CdDrive.Create(drive))
