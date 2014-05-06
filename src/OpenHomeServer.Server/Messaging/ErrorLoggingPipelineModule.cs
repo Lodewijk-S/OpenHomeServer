@@ -1,14 +1,14 @@
-﻿using Common.Logging;
-using Microsoft.AspNet.SignalR.Hubs;
+﻿using Microsoft.AspNet.SignalR.Hubs;
+using Serilog;
 using System;
 
 namespace OpenHomeServer.Server.Messaging
 {
     public class ErrorLoggingPipelineModule : HubPipelineModule
     {
-        private readonly ILog _logger;
+        private readonly ILogger _logger;
 
-        public ErrorLoggingPipelineModule(ILog logger)
+        public ErrorLoggingPipelineModule(ILogger logger)
         {
             _logger = logger;
         }

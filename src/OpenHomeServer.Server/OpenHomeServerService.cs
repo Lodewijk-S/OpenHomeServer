@@ -1,16 +1,16 @@
-﻿using Common.Logging;
-using System;
+﻿using System;
 using OpenHomeServer.Server.DuctTape;
 using Topshelf;
+using Serilog;
 
 namespace OpenHomeServer.Server
 {
     public class OpenHomeServerService : ServiceControl
     {
         private readonly OwinWebApplicationHost _webHost;
-        private readonly ILog _logger;
+        private readonly ILogger _logger;
 
-        public OpenHomeServerService(OwinWebApplicationHost webHost, ILog logger)
+        public OpenHomeServerService(OwinWebApplicationHost webHost, ILogger logger)
         {
             _webHost = webHost;
             _logger = logger;

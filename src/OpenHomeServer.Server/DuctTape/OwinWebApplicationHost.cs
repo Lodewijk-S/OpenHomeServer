@@ -1,4 +1,4 @@
-﻿using Common.Logging;
+﻿using Serilog;
 using OpenHomeServer.Server.Messaging;
 using Microsoft.Owin.Hosting;
 using Owin;
@@ -12,9 +12,9 @@ namespace OpenHomeServer.Server.DuctTape
     {
         IDisposable _host;
         readonly IWindsorContainer _container;
-        readonly ILog _logger;
+        readonly ILogger _logger;
 
-        public OwinWebApplicationHost(IWindsorContainer container, ILog logger)
+        public OwinWebApplicationHost(IWindsorContainer container, ILogger logger)
         {
             _container = container;
             _logger = logger;
@@ -36,7 +36,7 @@ namespace OpenHomeServer.Server.DuctTape
                 a.UseNancy();
 
                 var addresses = a.Properties["host.Addresses"] as List<IDictionary<String, Object>>;
-                _logger.InfoFormat("Webserver started at port {0}", addresses[0]["port"]);
+                _logger.Information("Webserver started at port {0}", addresses[0]["port"]);
             });
         }
 

@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Specialized;
 using Castle.Windsor;
-using Common.Logging;
+using Serilog;
+using Serilog.Extras.Topshelf;
 using Topshelf;
 
 namespace OpenHomeServer.Server
@@ -11,9 +12,10 @@ namespace OpenHomeServer.Server
         public static void Main(string[] args)
         {
             //Setup Logging
-            var properties = new NameValueCollection();
-            LogManager.Adapter = new Common.Logging.Log4Net.Log4NetLoggerFactoryAdapter(properties);
-            var logger = LogManager.GetCurrentClassLogger();
+            var logging = new LoggerConfiguration()            
+                .WriteTo.ColoredConsole()
+                .CreateLogger();
+            Log.Logger = logging;
 
             try
             {
@@ -36,6 +38,8 @@ namespace OpenHomeServer.Server
                             x.SetDescription("Home Server Service for Windows");
                             x.SetDisplayName("OpenHomeServer Service");
 
+                            x.UseSerilog();
+
                             x.StartAutomatically();
                             
                             x.Service(() => service);                            
@@ -45,7 +49,7 @@ namespace OpenHomeServer.Server
             }
             catch (Exception e)
             {
-                logger.Error("Cannot start the application", e);
+                logging.Error("Cannot start the application", e);
                 Console.ReadKey(); 
             }
         }        

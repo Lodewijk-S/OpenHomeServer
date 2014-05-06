@@ -1,5 +1,5 @@
 ﻿using Castle.Windsor;
-using Common.Logging;
+using Serilog;
 using Nancy;
 using Nancy.Bootstrapper;
 using Nancy.Bootstrappers.Windsor;
@@ -56,7 +56,7 @@ namespace OpenHomeServer.Server.Web
         protected override void ApplicationStartup(IWindsorContainer container, IPipelines pipelines)
         {
             base.ApplicationStartup(container, pipelines);
-            var logger = LogManager.GetCurrentClassLogger(); //container.Resolve<Common.Logging.ILog>();
+            var logger = Log.Logger; //container.Resolve<Common.Logging.ILog>();
 
             pipelines.OnError += (ctx, ex) =>
             {

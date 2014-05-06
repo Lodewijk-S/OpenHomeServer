@@ -1,7 +1,7 @@
 ﻿using Castle.Core;
 using Castle.MicroKernel;
 using Castle.MicroKernel.Context;
-using Common.Logging;
+using Serilog;
 
 namespace OpenHomeServer.Server.DuctTape
 {
@@ -9,16 +9,16 @@ namespace OpenHomeServer.Server.DuctTape
     {
         public bool CanResolve(CreationContext context, ISubDependencyResolver contextHandlerResolver, ComponentModel model, DependencyModel dependency)
         {
-            return dependency.TargetType == typeof(ILog);
+            return dependency.TargetType == typeof(ILogger);
         }
 
         public object Resolve(CreationContext context, ISubDependencyResolver contextHandlerResolver, ComponentModel model, DependencyModel dependency)
         {
             if (CanResolve(context, contextHandlerResolver, model, dependency))
             {
-                if (dependency.TargetType == typeof(ILog))
+                if (dependency.TargetType == typeof(ILogger))
                 {
-                    return LogManager.GetLogger(model.Implementation);
+                    return Log.ForContext(model.Implementation.GetType());
                 }
             }
             return null;
