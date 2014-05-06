@@ -8,6 +8,7 @@ using System.Reactive.Disposables;
 using System.Threading;
 using System.Threading.Tasks;
 using OpenHomeServer.Server.Plugins.Notifications;
+using Serilog;
 
 namespace OpenHomeServer.Server.Plugins.Ripper
 {
@@ -84,7 +85,7 @@ namespace OpenHomeServer.Server.Plugins.Ripper
     {
         private readonly IDisposable _observer;
 
-        public RipperBackgroundWorker(RipperService ripperService)
+        public RipperBackgroundWorker(RipperService ripperService, ILogger logger)
         {
             _observer = new DiscChangeObservable().Subscribe(async disc =>
             {
@@ -98,9 +99,10 @@ namespace OpenHomeServer.Server.Plugins.Ripper
                                 ripperService.OnDiscInsertion(disc);
                                 break;
                             case "UDF":
-                                //this is a DVD or a BluRay disc
+                                logger.Information("A DVD of BluRay had been inserted. This is not yet supported.");
                                 break;
                             default:
+                                logger.Information("An unknown disc format has been inserted in drive {drivename}: {driveformat}", disc.Name, disc.DriveFormat);
                                 break;
                         }
                     }

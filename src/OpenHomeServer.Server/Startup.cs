@@ -12,7 +12,10 @@ namespace OpenHomeServer.Server
         public static void Main(string[] args)
         {
             //Setup Logging
-            var logging = new LoggerConfiguration()            
+            var logging = new LoggerConfiguration()       
+#if DEBUG
+                .MinimumLevel.Debug()
+#endif
                 .WriteTo.ColoredConsole()
                 .CreateLogger();
             Log.Logger = logging;

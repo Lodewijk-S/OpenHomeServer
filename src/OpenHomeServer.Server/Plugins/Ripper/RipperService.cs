@@ -8,6 +8,7 @@ using CdRipper.Rip;
 using CdRipper.Tagging;
 using OpenHomeServer.Server.Plugins.Notifications;
 using OpenHomeServer.Server.Plugins.Ripper.Domain;
+using Serilog;
 
 namespace OpenHomeServer.Server.Plugins.Ripper
 {
@@ -15,16 +16,18 @@ namespace OpenHomeServer.Server.Plugins.Ripper
     {
         private readonly RipperNotificator _notificator;
         private readonly Notificator _mainNotificator;
+        private readonly ILogger _logger;
         private readonly ITagSource _tagSource;
         private readonly StatusTracker _tracker;
 
         private CancellationTokenSource _cancellationTokenSource;
         private Task _rippingTask;
 
-        public RipperService(RipperNotificator notificator, Notificator mainNotificator)
+        public RipperService(RipperNotificator notificator, Notificator mainNotificator, ILogger logger)
         {
             _notificator = notificator;
             _mainNotificator = mainNotificator;
+            _logger = logger;
             _tagSource = new MusicBrainzTagSource(new MusicBrainzApi("http://musicbrainz.org"));
             _tracker = new StatusTracker();
 
@@ -68,7 +71,7 @@ namespace OpenHomeServer.Server.Plugins.Ripper
         {
             if (IsRipping())
             {
-                //Cannot start two ripping processes
+                _logger.Debug("Cannot start two ripping processes at the same time.");
                 return;
             }
 
@@ -81,6 +84,7 @@ namespace OpenHomeServer.Server.Plugins.Ripper
                 }
                 catch (Exception e)
                 {
+                    _logger.Error(e, "An exception occured while ripping");
                     throw e;
                 }
             }, TaskCreationOptions.LongRunning);

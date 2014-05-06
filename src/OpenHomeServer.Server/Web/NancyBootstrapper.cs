@@ -56,11 +56,16 @@ namespace OpenHomeServer.Server.Web
         protected override void ApplicationStartup(IWindsorContainer container, IPipelines pipelines)
         {
             base.ApplicationStartup(container, pipelines);
-            var logger = Log.Logger; //container.Resolve<Common.Logging.ILog>();
+            var logger = Log.ForContext<NancyBootstrapper>();
+
+            pipelines.AfterRequest += (ctx) =>
+            {
+                logger.Debug("A request was initiated to {RoutePath}", ctx.ResolvedRoute.Description.Path);
+            };
 
             pipelines.OnError += (ctx, ex) =>
             {
-                logger.Error("", ex);
+                logger.Error(ex, "");
                 return null;
             };
         }
