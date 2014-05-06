@@ -110,6 +110,9 @@
     <Reference Include="Serilog">
       <HintPath>..\packages\Serilog.1.3.4\lib\net45\Serilog.dll</HintPath>
     </Reference>
+    <Reference Include="Serilog.Extras.MSOwin">
+      <HintPath>..\packages\Serilog.Extras.MSOwin.1.3.4\lib\net45\Serilog.Extras.MSOwin.dll</HintPath>
+    </Reference>
     <Reference Include="Serilog.Extras.Topshelf">
       <HintPath>..\packages\Serilog.Extras.Topshelf.1.3.4\lib\net45\Serilog.Extras.Topshelf.dll</HintPath>
     </Reference>
