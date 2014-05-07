@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNet.SignalR.Hubs;
 using Serilog;
-using System;
 
 namespace OpenHomeServer.Server.Messaging
 {
@@ -15,7 +14,19 @@ namespace OpenHomeServer.Server.Messaging
 
         protected override void OnIncomingError(ExceptionContext exceptionContext, IHubIncomingInvokerContext invokerContext)
         {
-            _logger.Error("Error in Signalr", exceptionContext.Error);
+            _logger.Error(exceptionContext.Error, "Signalr encountered an error: {@SignalrContext}", new SignalrContextLog(invokerContext));
         }
+    }
+
+    public class SignalrContextLog
+    {
+        public SignalrContextLog(IHubIncomingInvokerContext context)
+        {
+            HubName = context.MethodDescriptor.Hub.Name;
+            MethodName = context.MethodDescriptor.Name;
+        }
+
+        public string HubName { get; private set; }
+        public string MethodName { get; private set; }
     }
 }

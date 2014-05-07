@@ -16,17 +16,17 @@ namespace OpenHomeServer.Server.Web
                 if (ctx == null || ctx.Response == null)
                     return;
 
-                logger.Information("A Request was passed trough the Nancy pipeline: {@NancyProperties}", new NancyRequestProperties(ctx));
+                logger.Information("Nancy processed a request: {@NancyContext}", new NancyContextLog(ctx));
             });
 
             pipelines.OnError += (ctx, ex) =>
             {
-                logger.Error(ex, "Nancy failed to process this request: {@NancyProperties}", new NancyRequestProperties(ctx));
+                logger.Error(ex, "Nancy failed to process this request: {@NancyContext}", new NancyContextLog(ctx));
                 return null;
             };
         }
 
-        public class NancyRequestProperties
+        public class NancyContextLog
         {
             public string Url { get; set; }
             public string StatusCode { get; set; }
@@ -34,7 +34,7 @@ namespace OpenHomeServer.Server.Web
             public string ModulePath { get; set; }
             public string UserName { get; set; }
 
-            public NancyRequestProperties(NancyContext context)
+            public NancyContextLog(NancyContext context)
             {
                 Url = context.Request == null ? string.Empty : context.Request.Url.ToString();
                 StatusCode = context.Response == null ? string.Empty : context.Response.StatusCode.ToString();
