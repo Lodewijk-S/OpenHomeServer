@@ -147,6 +147,7 @@
     <Compile Include="DuctTape\LoggerSubDependencyResolver.cs" />
     <Compile Include="DuctTape\OwinWebApplicationHost.cs" />
     <Compile Include="DuctTape\MainInstaller.cs" />
+    <Compile Include="DuctTape\OwinWithSerilog.cs" />
     <Compile Include="Messaging\ErrorLoggingPipelineModule.cs" />
     <Compile Include="Plugins\Notification\Notification.cs" />
     <Compile Include="Plugins\Notification\NotificationModule.cs" />

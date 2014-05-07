@@ -1,11 +1,11 @@
-﻿using Serilog;
-using OpenHomeServer.Server.Messaging;
+﻿using OpenHomeServer.Server.Messaging;
 using Microsoft.Owin.Hosting;
 using Owin;
 using System;
 using System.Collections.Generic;
 using Castle.Windsor;
 using Serilog.Extras.MSOwin;
+using Serilog;
 
 namespace OpenHomeServer.Server.DuctTape
 {
@@ -38,6 +38,7 @@ namespace OpenHomeServer.Server.DuctTape
 
                 //Serilog
                 a.UseSerilogRequestContext();
+                a.UseSerilog(_logger);
 
                 var addresses = a.Properties["host.Addresses"] as List<IDictionary<String, Object>>;
                 _logger.Information("Webserver started at port {0}", addresses[0]["port"]);
