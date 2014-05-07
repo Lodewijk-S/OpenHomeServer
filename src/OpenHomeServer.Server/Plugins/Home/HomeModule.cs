@@ -1,13 +1,12 @@
 ﻿using Nancy;
-using OpenHomeServer.Server.Web.Providers;
 
 namespace OpenHomeServer.Server.Plugins.Home
 {
     public class HomeModule : NancyModule
     {
-        public HomeModule(ServerInfoProvider provider)
+        public HomeModule()
         {
-            Get["/"] = x => View["index.cshtml", new { ServerInfo = provider.GetServerInfo(), Title = "Welcome to your OpenHomeServer" }];
+            Get["/"] = x => View["index.cshtml", new { Title = "Welcome to your OpenHomeServer" }];
         }
     }
 }

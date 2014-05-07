@@ -28,7 +28,7 @@ namespace OpenHomeServer.Server
                     container.Install(
                         new DuctTape.MainInstaller(), 
                         new Messaging.MessagingInstaller(), 
-                        new Web.WebInstaller(),
+                        new Web.NancyInstaller(),
                         new Plugins.PluginInstaller()
                         );
 

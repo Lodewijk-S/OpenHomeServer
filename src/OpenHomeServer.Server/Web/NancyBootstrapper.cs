@@ -1,6 +1,4 @@
 ﻿using Castle.Windsor;
-using Serilog;
-using Nancy;
 using Nancy.Bootstrapper;
 using Nancy.Bootstrappers.Windsor;
 using Nancy.ViewEngines;
@@ -21,7 +19,7 @@ namespace OpenHomeServer.Server.Web
             _container = container;
         }
 
-        protected override Castle.Windsor.IWindsorContainer GetApplicationContainer()
+        protected override IWindsorContainer GetApplicationContainer()
         {
             return _container;
         }        
@@ -39,7 +37,7 @@ namespace OpenHomeServer.Server.Web
         protected override void ConfigureConventions(Nancy.Conventions.NancyConventions conventions)
         {
             base.ConfigureConventions(conventions);
-
+            
             conventions.StaticContentsConventions.Add(
                 Nancy.Embedded.Conventions.EmbeddedStaticContentConventionBuilder.AddDirectory("Assets", this.GetType().Assembly, "Web\\Assets")
             );
@@ -56,18 +54,7 @@ namespace OpenHomeServer.Server.Web
         protected override void ApplicationStartup(IWindsorContainer container, IPipelines pipelines)
         {
             base.ApplicationStartup(container, pipelines);
-            var logger = Log.ForContext<NancyBootstrapper>();
-
-            pipelines.AfterRequest += (ctx) =>
-            {
-                logger.Debug("A request was initiated to {RoutePath}", ctx.ResolvedRoute.Description.Path);
-            };
-
-            pipelines.OnError += (ctx, ex) =>
-            {
-                logger.Error(ex, "");
-                return null;
-            };
+            pipelines.WithSerilog();
         }
 
 #if DEBUG
