@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Specialized;
 using Castle.Windsor;
 using Serilog;
 using Serilog.Extras.Topshelf;
@@ -52,7 +51,7 @@ namespace OpenHomeServer.Server
             }
             catch (Exception e)
             {
-                logging.Error("Cannot start the application", e);
+                logging.Error(e, "Cannot start the application");
                 Console.ReadKey(); 
             }
         }        
