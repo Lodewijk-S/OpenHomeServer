@@ -2,6 +2,8 @@
 using Nancy.Extensions;
 using Nancy.Responses;
 using Newtonsoft.Json;
+using OpenHomeServer.Server.Plugins.Ripper.Domain;
+using OpenHomeServer.Server.Storage;
 
 namespace OpenHomeServer.Server.Plugins.Ripper
 {
@@ -30,6 +32,7 @@ namespace OpenHomeServer.Server.Plugins.Ripper
                 }
                 return new RedirectResponse(ModulePath);
             };
+            Get["/settings"] = x => View["settings.cshtml", new { Title = "Ripper Settings", Settings = new Persister<RipperSettings>("OpenHomeServer").GetValue() }];
         }
 
         private RipperViewModel GetRipperViewModel(RipperService service)
