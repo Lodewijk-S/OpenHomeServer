@@ -20,6 +20,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CdRipper", "..\dependencies
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenHomeServer.Tests", "OpenHomeServer.Tests\OpenHomeServer.Tests.csproj", "{4872FADB-5FF0-456E-940F-AE3A59CA3DD1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspectCache", "..\dependencies\AspectCache\AspectCache\AspectCache.csproj", "{1BB5906B-B578-4F45-BE86-8DE0A1B33742}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -42,11 +44,16 @@ Global
 		{4872FADB-5FF0-456E-940F-AE3A59CA3DD1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4872FADB-5FF0-456E-940F-AE3A59CA3DD1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4872FADB-5FF0-456E-940F-AE3A59CA3DD1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1BB5906B-B578-4F45-BE86-8DE0A1B33742}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1BB5906B-B578-4F45-BE86-8DE0A1B33742}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1BB5906B-B578-4F45-BE86-8DE0A1B33742}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1BB5906B-B578-4F45-BE86-8DE0A1B33742}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{6B7D4490-A896-4403-A385-404D10D8BBC6} = {FD0C3332-236B-4A6B-B79A-C0AB707D2C45}
+		{1BB5906B-B578-4F45-BE86-8DE0A1B33742} = {FD0C3332-236B-4A6B-B79A-C0AB707D2C45}
 	EndGlobalSection
 EndGlobal

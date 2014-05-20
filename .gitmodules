@@ -1,3 +1,6 @@
 [submodule "dependencies/CdRipper"]
 	path = dependencies/CdRipper
 	url = https://github.com/LodewijkSioen/CdRipper.net.git
+[submodule "dependencies/AspectCache"]
+	path = dependencies/AspectCache
+	url = https://github.com/LodewijkSioen/AspectCache.git

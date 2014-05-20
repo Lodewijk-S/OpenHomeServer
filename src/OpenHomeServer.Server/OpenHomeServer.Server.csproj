@@ -224,6 +224,10 @@
     <EmbeddedResource Include="Web\Assets\Scripts\jquery-2.1.0.min.js" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\dependencies\AspectCache\AspectCache\AspectCache.csproj">
+      <Project>{1bb5906b-b578-4f45-be86-8de0a1b33742}</Project>
+      <Name>AspectCache</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\dependencies\CdRipper\src\CdRipper\CdRipper.csproj">
       <Project>{6B7D4490-A896-4403-A385-404D10D8BBC6}</Project>
       <Name>CdRipper</Name>
