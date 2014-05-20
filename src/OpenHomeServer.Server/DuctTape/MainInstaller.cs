@@ -13,6 +13,7 @@ namespace OpenHomeServer.Server.DuctTape
             //Container configuration
             container.AddFacility<TypedFactoryFacility>();
             container.AddFacility<StartableFacility>(f => f.DeferredStart());
+            container.AddFacility<AspectCache.CacheFacility>();
             container.Kernel.Resolver.AddSubResolver(new CollectionResolver(container.Kernel, true));
             container.Register(Component.For<IWindsorContainer>().Instance(container));
 

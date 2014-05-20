@@ -175,6 +175,7 @@
     <Compile Include="Plugins\Ripper\Domain\StatusTracker.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="Storage\Persister.cs" />
+    <Compile Include="Storage\StorageInstaller.cs" />
     <Compile Include="Web\NancyBootstrapper.cs" />
     <Compile Include="OpenHomeServerService.cs" />
     <Compile Include="Web\EmbeddedStaticContentConventionBuilder.cs" />

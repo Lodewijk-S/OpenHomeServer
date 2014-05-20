@@ -9,7 +9,7 @@ namespace OpenHomeServer.Server.Plugins.Ripper
 {
     public class RipperModule : NancyModule
     {
-        public RipperModule(RipperService service)
+        public RipperModule(RipperService service, Persister<RipperSettings> persister)
             : base("ripper")
         {
             Get["/"] = x => View["index.cshtml", GetRipperViewModel(service)];
@@ -32,7 +32,7 @@ namespace OpenHomeServer.Server.Plugins.Ripper
                 }
                 return new RedirectResponse(ModulePath);
             };
-            Get["/settings"] = x => View["settings.cshtml", new { Title = "Ripper Settings", Settings = new Persister<RipperSettings>("OpenHomeServer").GetValue() }];
+            Get["/settings"] = x => View["settings.cshtml", new { Title = "Ripper Settings", Settings = persister.Get() }];
         }
 
         private RipperViewModel GetRipperViewModel(RipperService service)

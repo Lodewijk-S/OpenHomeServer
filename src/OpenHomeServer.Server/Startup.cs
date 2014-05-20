@@ -28,7 +28,8 @@ namespace OpenHomeServer.Server
                         new DuctTape.MainInstaller(), 
                         new Messaging.MessagingInstaller(), 
                         new Web.NancyInstaller(),
-                        new Plugins.PluginInstaller()
+                        new Plugins.PluginInstaller(),
+                        new Storage.StorageInstaller()
                         );
 
                     var service = container.Resolve<OpenHomeServerService>();

@@ -30,7 +30,7 @@ namespace OpenHomeServer.Tests.Storage
         public void GettingAnUnsavedClassReturnsDefaultValues()
         {
             var persister = CreatePersister();
-            var settings = persister.GetValue();
+            var settings = persister.Get();
 
             settings.ShouldNotBe(null);
             settings.SomeString.ShouldBe(default(string));
@@ -39,37 +39,13 @@ namespace OpenHomeServer.Tests.Storage
         public void SettingValuesShouldPersistThem()
         {
             var persister = CreatePersister();
-            persister.OpenForChanging(s => 
+            persister.Save(new SomeClassToPersist
             {
-                s.SomeString = "test";
+                SomeString = "test"
             });
 
-            var settings = persister.GetValue();
+            var settings = persister.Get();
             settings.SomeString.ShouldBe("test");
-
-            var newPersister = CreatePersister();
-            newPersister.GetValue().SomeString.ShouldBe("test");
-        }
-
-        public void ResettingThePersisterShouldResetTheFileButNotBreakThePersister()
-        {
-            var persister = CreatePersister();
-            persister.OpenForChanging(p => 
-            {
-                p.SomeString = "test";
-            });
-            persister.Reset();
-
-            File.Exists(Path.Combine(ExpectedPath, ExpectedFileName)).ShouldBe(true);
-
-            persister.GetValue().SomeString.ShouldBe(default(string));
-
-            persister.OpenForChanging(p => 
-            {
-                p.SomeString = "test";
-            });
-
-            persister.GetValue().SomeString.ShouldBe("test");
         }
 
         public void Dispose()
