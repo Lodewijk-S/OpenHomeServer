@@ -32,7 +32,7 @@ namespace OpenHomeServer.Server.Plugins.Ripper
                 }
                 return new RedirectResponse(ModulePath);
             };
-            Get["/settings"] = x => View["settings.cshtml", new { Title = "Ripper Settings", Settings = persister.Get() }];
+            Get["/settings"] = x => View["settings.cshtml", new RipperSettingsViewModel { Title = "Ripper Settings", Settings = persister.Get() }];
         }
 
         private RipperViewModel GetRipperViewModel(RipperService service)
@@ -51,5 +51,11 @@ namespace OpenHomeServer.Server.Plugins.Ripper
     {
         public string Title { get; set; }
         public string View { get; set; }
+    }
+
+    public class RipperSettingsViewModel
+    {
+        public string Title { get; set; }
+        public RipperSettings Settings { get; set; }
     }
 }
