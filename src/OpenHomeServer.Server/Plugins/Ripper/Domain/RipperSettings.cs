@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.ComponentModel;
 
 namespace OpenHomeServer.Server.Plugins.Ripper.Domain
 {
@@ -14,6 +10,7 @@ namespace OpenHomeServer.Server.Plugins.Ripper.Domain
             MusicCollectionRoot = Environment.GetFolderPath(Environment.SpecialFolder.MyMusic);
         }
 
+        [DisplayName("Rip music to")]
         public string MusicCollectionRoot { get; set; }
     }
 }
