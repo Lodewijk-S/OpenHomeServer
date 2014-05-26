@@ -10,15 +10,18 @@ namespace OpenHomeServer.Runner
     //With inspitation from https://github.com/jbogard/NServiceBus.MessageRouting/blob/master/src/ServiceHost/Program.cs
     class Program
     {
-        private const string BinPath = @"..\..\..\OpenHomeServer.Server\bin\Debug";
+        private static string _executable;
         private static Timer _reloadTimer;
         private static readonly List<FileSystemWatcher> Watchers = new List<FileSystemWatcher>();
         private static readonly object Sync = new Object();
         private static AppDomain _domain;
-
+        private const int OnTimeOutWait = 1;
 
         static void Main(string[] args)
         {
+            var currentDirectory = Directory.GetCurrentDirectory();
+            _executable = Path.Combine(currentDirectory, "OpenHomeServer.Server.exe");
+
             LoadServices();
 
             while (ProcessKey(Console.ReadKey().KeyChar))
@@ -50,20 +53,23 @@ namespace OpenHomeServer.Runner
 
         private static void LoadServices()
         {
-            Watchers.Add(CreateWatcher(BinPath, "*.dll"));
-            Watchers.Add(CreateWatcher(BinPath, "*.config"));
+            var directory = Path.GetDirectoryName(_executable);
+
+            Watchers.Add(CreateWatcher(directory, "*.exe"));
+            Watchers.Add(CreateWatcher(directory, "*.dll"));
+            Watchers.Add(CreateWatcher(directory, "*.config"));
 
             var domainInfo = new AppDomainSetup
             {
-                ConfigurationFile = "OpenHomeServer.Server.exe.config",
-                ApplicationBase = BinPath,
+                ConfigurationFile = Path.GetFileName(_executable) +  ".config",
+                ApplicationBase = directory,
                 ShadowCopyFiles = "true",
                 ApplicationName = "OpenHomeServer",
             };
 
             _domain = AppDomain.CreateDomain("OpenHomeServer", null, domainInfo);
-
-            var assemblyName = AssemblyName.GetAssemblyName(BinPath + @"\OpenHomeServer.Server.exe");
+            var assemblyName = AssemblyName.GetAssemblyName(_executable);
+            
             Task.Run(() =>
             {
                 try
@@ -140,7 +146,7 @@ namespace OpenHomeServer.Runner
                 if (_reloadTimer == null)
                 {
                     Console.WriteLine("Filesystem change detected, queueing restart...");
-                    _reloadTimer = new Timer(OnReloadTimerElapsed, null, TimeSpan.FromSeconds(10),
+                    _reloadTimer = new Timer(OnReloadTimerElapsed, null, TimeSpan.FromSeconds(OnTimeOutWait),
                                              TimeSpan.FromMilliseconds(-1));
                 }
             }

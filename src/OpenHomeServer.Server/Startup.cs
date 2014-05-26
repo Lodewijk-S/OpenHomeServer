@@ -9,8 +9,6 @@ namespace OpenHomeServer.Server
 {
     static class Startup
     {
-        private static Host _host;
-
         public static void Main(string[] args)
         {
             //Setup Logging
@@ -43,7 +41,7 @@ namespace OpenHomeServer.Server
                             x.SetServiceName("OpenHomeServer");
                             x.SetDescription("Home Server Service for Windows");
                             x.SetDisplayName("OpenHomeServer Service");
-
+                            
                             x.UseSerilog();
 
                             x.StartAutomatically();
