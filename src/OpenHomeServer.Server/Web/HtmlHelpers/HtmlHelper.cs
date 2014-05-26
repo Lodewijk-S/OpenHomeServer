@@ -77,18 +77,30 @@ namespace OpenHomeServer.Server.Web.HtmlHelpers
         }
 
         public static IHtmlString SubmitButton<T>(this HtmlHelpers<T> helpers)
-        {
+        {   
             var markup = "<div class='form-group'><div class='col-sm-offset-2 col-sm-10'><button type='submit' class='btn btn-defaul'>Save Changes</button></div></div>";
             return new NonEncodedHtmlString(markup);
         }
 
-        //public static IHtmlString FormFor<T>(this HtmlHelpers<T> helpers, Expression<Func<T, object>> expression)
-        //{
-        //    var type = typeof (T);
-        //    foreach (var property in type.GetProperties())
-        //    {
-                
-        //    }
-        //}
+        public static IDisposable BeginForm<T>(this NancyRazorViewBase<T> view)
+        {
+            return new FormHelper<T>(view);
+        }
+    }
+
+    public class FormHelper<T> : IDisposable
+    {
+        private readonly NancyRazorViewBase<T> _view;
+
+        public FormHelper(NancyRazorViewBase<T> view)
+        {
+            _view = view;
+            view.WriteLiteral("<form  class='form-horizontal' role='form' method='post'>");
+        }
+
+        public void Dispose()
+        {
+            _view.WriteLiteral("</form>");
+        }
     }
 }

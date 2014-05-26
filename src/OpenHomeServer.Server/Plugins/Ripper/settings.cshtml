@@ -6,10 +6,11 @@
 @section Javascript {
     
 }
-    <form class="form-horizontal" role="form" action="post">
+    @using (this.BeginForm())
+    {
         <fieldset>
             <legend>Ripper Settings</legend>
             @Html.FormGroupFor(model => model.Settings.MusicCollectionRoot)
             @Html.SubmitButton()
         </fieldset>
-	</form>
+    }
