@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Castle.Windsor;
 using Serilog;
 using Serilog.Extras.Topshelf;
@@ -8,6 +9,8 @@ namespace OpenHomeServer.Server
 {
     static class Startup
     {
+        private static Host _host;
+
         public static void Main(string[] args)
         {
             //Setup Logging
@@ -48,12 +51,10 @@ namespace OpenHomeServer.Server
                             x.Service(() => service);                            
                         });
                 }
-                Console.ReadKey();
             }
             catch (Exception e)
             {
                 logging.Error(e, "Cannot start the application");
-                Console.ReadKey(); 
             }
         }        
     }
