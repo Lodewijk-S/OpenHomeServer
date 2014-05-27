@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 using CdRipper.Encode;
 using CdRipper.Rip;
 using CdRipper.Tagging;
-using OpenHomeServer.Server.Plugins.Notifications;
 using OpenHomeServer.Server.Plugins.Ripper.Domain;
+using OpenHomeServer.Server.Storage;
 using Serilog;
 
 namespace OpenHomeServer.Server.Plugins.Ripper
@@ -15,7 +15,7 @@ namespace OpenHomeServer.Server.Plugins.Ripper
     public class RipperService
     {
         private readonly RipperNotificator _notificator;
-        private readonly Notificator _mainNotificator;
+        private readonly Persister<RipperSettings> _settings;
         private readonly ILogger _logger;
         private readonly ITagSource _tagSource;
         private readonly StatusTracker _tracker;
@@ -23,10 +23,10 @@ namespace OpenHomeServer.Server.Plugins.Ripper
         private CancellationTokenSource _cancellationTokenSource;
         private Task _rippingTask;
 
-        public RipperService(RipperNotificator notificator, Notificator mainNotificator, ILogger logger)
+        public RipperService(RipperNotificator notificator, Persister<RipperSettings> settings, ILogger logger)
         {
             _notificator = notificator;
-            _mainNotificator = mainNotificator;
+            _settings = settings;
             _logger = logger;
             _tagSource = new MusicBrainzTagSource(new MusicBrainzApi("http://musicbrainz.org"));
             _tracker = new StatusTracker();
@@ -137,13 +137,19 @@ namespace OpenHomeServer.Server.Plugins.Ripper
 
             using (var reader = new TrackReader(cdDrive))
             {
+                var settings = _settings.Get();
                 using (var lame = new LameMp3Encoder(new EncoderSettings
                 {
                     Track = trackIdentification,
+                    Mp3Settings = new Mp3Settings
+                    {
+                        Bitrate = settings.BitRate,
+                        Type = settings.BitRateType
+                    },
                     Output = new OutputLocation
                     {
-                        BaseDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), @"encoding\OpenHomeserverRipping\"),
-                        FileNameMask = "{albumartist}\\{albumtitle}\\{tracknumber}-{title}.mp3"
+                        BaseDirectory = settings.MusicCollectionRoot,
+                        FileNameMask = settings.FileNameMask
                     }
                 }))
                 {

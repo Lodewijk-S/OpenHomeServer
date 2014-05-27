@@ -1,4 +1,6 @@
-﻿@{
+﻿@using OpenHomeServer.Server.Web.HtmlHelpers
+@inherits Nancy.ViewEngines.Razor.NancyRazorViewBase<object>
+@{
 	Layout = "layout.cshtml";
 }
 @section Javascript {
@@ -6,12 +8,12 @@
         $(function() {
             $("#container").append("this means javascript works");
         });
-        $("#messageSender").click(function () { openHomeServer.notificator.sendNotification("test!", "/Ripper"); });
+        $("#messageSender").click(function () { openHomeServer.notificator.sendNotification("test!", "@Url.Content("~/ripper")"); });
     </script>
 }
 hello world!
 <br />
-<a href="/ripper">Go to ripper</a>
+<a href="@Url.Content("~/ripper")">Go to ripper</a>
 <br />
 <button id="messageSender">Send Message</button>
 <br />

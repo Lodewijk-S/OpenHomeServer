@@ -11,6 +11,8 @@
         <fieldset>
             <legend>Ripper Settings</legend>
             @Html.FormGroupFor(model => model.Settings.MusicCollectionRoot)
+            @Html.FormGroupFor(model => model.Settings.FileNameMask)
+            @Html.FormGroupFor(model => model.Settings.BitRate)
             @Html.SubmitButton()
         </fieldset>
     }

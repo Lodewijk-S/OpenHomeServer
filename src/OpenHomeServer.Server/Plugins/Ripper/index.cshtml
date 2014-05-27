@@ -1,4 +1,6 @@
-﻿@{
+﻿@using OpenHomeServer.Server.Web.HtmlHelpers
+@inherits Nancy.ViewEngines.Razor.NancyRazorViewBase<OpenHomeServer.Server.Plugins.Ripper.RipperViewModel>
+@{
 	Layout = "layout.cshtml";
 }
 @section Javascript {
@@ -33,7 +35,7 @@
             };
 
             self.cancelRipping = function() {
-                $.post("ripper/cancel");
+                $.post("@Url.Content("~/ripper/cancel")");
             };
 
             self.onStatusChanged(status);
@@ -51,7 +53,7 @@
             }
 
             self.selectAlbum = function () {
-                $.post("ripper/selectalbum", { albumId: self.id });
+                $.post("@Url.Content("~/ripper/selectalbum")", { albumId: self.id });
             };
         }
 
@@ -79,7 +81,7 @@
     </script>
 }
     <div class="panel panel-default">
-        <div class="panel-heading">Current Status</div>
+        <div class="panel-heading">Current Status (<a href="@Url.Content("~/ripper/settings")">Settings</a>)</div>
 
         <div data-bind="visible: isEmpty" class="panel-body">
             <p>No disc currently inserted</p>

@@ -15,7 +15,7 @@ namespace OpenHomeServer.Runner
         private static readonly List<FileSystemWatcher> Watchers = new List<FileSystemWatcher>();
         private static readonly object Sync = new Object();
         private static AppDomain _domain;
-        private const int OnTimeOutWait = 1;
+        private const int OnTimeOutWait = 3;
 
         static void Main(string[] args)
         {
