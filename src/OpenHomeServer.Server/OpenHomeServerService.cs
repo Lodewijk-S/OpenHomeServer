@@ -2,6 +2,8 @@
 using OpenHomeServer.Server.DuctTape;
 using Topshelf;
 using Serilog;
+using System.Reflection;
+using System.Net;
 
 namespace OpenHomeServer.Server
 {
@@ -22,6 +24,19 @@ namespace OpenHomeServer.Server
             {
                 _webHost.Start();
                 return true;
+            }
+            catch (TargetInvocationException e)
+            {
+                if (e.InnerException != null && e.InnerException is HttpListenerException) 
+                {
+                    _logger.Error(e, "Unable to start ServiceHost. You need to run as Administrator if you want to open up to more than localhost.");
+                }
+                else
+                {
+                    _logger.Error(e, "Unable to start ServiceHost");
+                }
+                
+                return false;
             }
             catch(Exception e)
             {
