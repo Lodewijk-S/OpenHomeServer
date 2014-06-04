@@ -23,9 +23,9 @@ namespace OpenHomeServer.Server.DuctTape
 
         public void Start()
         {
-            var startOptions = new StartOptions
+            var startOptions = new StartOptions("http://*:8083")
             {
-                Port = 8083
+                
             };
 
             _host = WebApp.Start(startOptions, a =>

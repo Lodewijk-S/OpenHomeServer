@@ -25,7 +25,7 @@ namespace OpenHomeServer.Server
             }
             catch(Exception e)
             {
-                _logger.Error("Unable to start ServiceHost", e);
+                _logger.Error(e, "Unable to start ServiceHost");
                 return false;
             }
         }
@@ -40,7 +40,7 @@ namespace OpenHomeServer.Server
             }
             catch (Exception e)
             {
-                _logger.Error("Unable to stop ServiceHost", e);
+                _logger.Error(e, "Unable to stop ServiceHost");
                 return false;
             }
         }        

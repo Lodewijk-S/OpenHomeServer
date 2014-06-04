@@ -40,14 +40,16 @@ namespace OpenHomeServer.Server
                         {
                             x.SetServiceName("OpenHomeServer");
                             x.SetDescription("Home Server Service for Windows");
-                            x.SetDisplayName("OpenHomeServer Service");
-                            
+                            x.SetDisplayName("OpenHomeServer Service");     
+
                             x.UseSerilog();
 
                             x.StartAutomatically();
                             
                             x.Service(() => service);                            
                         });
+
+                    container.Release(service);
                 }
             }
             catch (Exception e)
