@@ -95,7 +95,7 @@ namespace OpenHomeServer.Server.Web.HtmlHelpers
         public FormHelper(NancyRazorViewBase<T> view)
         {
             _view = view;
-            view.WriteLiteral("<form  class='form-horizontal' role='form' method='post'>");
+            view.WriteLiteral("<form class='form-horizontal' role='form' method='post'>");
         }
 
         public void Dispose()
