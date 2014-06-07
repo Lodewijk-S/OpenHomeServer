@@ -8,7 +8,7 @@ namespace OpenHomeServer.Server.Plugins.Ripper.Domain
     {
         public RipperSettings()
         {
-            MusicCollectionRoot = Environment.GetFolderPath(Environment.SpecialFolder.MyMusic);
+            MusicCollectionRoot = Environment.GetFolderPath(Environment.SpecialFolder.CommonMusic);
             FileNameMask = "{albumartist}\\{albumtitle}\\{tracknumber}-{title}.mp3";
             BitRate = 192;
             BitRateType = Mp3Settings.BitrateType.Variable;
