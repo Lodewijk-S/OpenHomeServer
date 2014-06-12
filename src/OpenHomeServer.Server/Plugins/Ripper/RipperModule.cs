@@ -35,10 +35,16 @@ namespace OpenHomeServer.Server.Plugins.Ripper
             Get["/settings"] = x => View["settings.cshtml", new RipperSettingsViewModel { Title = "Ripper Settings", Settings = persister.Get() }];
             Post["/settings"] = x => 
             {
-                var currentSettings = persister.Get();
-                currentSettings.MusicCollectionRoot = Request.Form.MusicCollectionRoot;
-                persister.Save(currentSettings);
-
+                if (Request.Form.Reset)
+                {
+                    persister.Save(new RipperSettings());
+                }
+                else
+                {
+                    var currentSettings = persister.Get();
+                    currentSettings.MusicCollectionRoot = Request.Form.MusicCollectionRoot;
+                    persister.Save(currentSettings);
+                }
                 return new RedirectResponse("settings");
             };
         }

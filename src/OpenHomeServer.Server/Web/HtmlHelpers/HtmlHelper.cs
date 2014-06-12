@@ -76,9 +76,9 @@ namespace OpenHomeServer.Server.Web.HtmlHelpers
             return new NonEncodedHtmlString(markup);
         }
 
-        public static IHtmlString SubmitButton<T>(this HtmlHelpers<T> helpers)
-        {   
-            var markup = "<div class='form-group'><div class='col-sm-offset-2 col-sm-10'><button type='submit' class='btn btn-defaul'>Save Changes</button></div></div>";
+        public static IHtmlString SubmitButtonWithReset<T>(this HtmlHelpers<T> helpers)
+        {
+            var markup = "<div class='form-group'><div class='col-sm-offset-2 col-sm-10'><button type='submit' class='btn btn-default'>Save Changes</button><button type='submit' name='reset' value='true' class='btn btn-link'>Reset</button></div></div>";
             return new NonEncodedHtmlString(markup);
         }
 
