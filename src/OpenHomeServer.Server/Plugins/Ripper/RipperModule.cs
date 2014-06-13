@@ -1,6 +1,7 @@
 ﻿using Nancy;
 using Nancy.Extensions;
 using Nancy.Responses;
+using Nancy.ModelBinding;
 using Newtonsoft.Json;
 using OpenHomeServer.Server.Plugins.Ripper.Domain;
 using OpenHomeServer.Server.Storage;
@@ -42,7 +43,7 @@ namespace OpenHomeServer.Server.Plugins.Ripper
                 else
                 {
                     var currentSettings = persister.Get();
-                    currentSettings.MusicCollectionRoot = Request.Form.MusicCollectionRoot;
+                    this.BindTo(currentSettings);
                     persister.Save(currentSettings);
                 }
                 return new RedirectResponse("settings");
