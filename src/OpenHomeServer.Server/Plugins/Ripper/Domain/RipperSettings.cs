@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using CdRipper.Encode;
 
 namespace OpenHomeServer.Server.Plugins.Ripper.Domain
@@ -14,13 +15,13 @@ namespace OpenHomeServer.Server.Plugins.Ripper.Domain
             BitRateType = Mp3Settings.BitrateType.Variable;
         }
 
-        [DisplayName("Rip music to")]
+        [DisplayName("Rip music to"), Required]
         public string MusicCollectionRoot { get; set; }
 
-        [DisplayName("Filename Mask")]
+        [DisplayName("Filename Mask"), Required]
         public string FileNameMask { get; set; }
 
-        [DisplayName("Bitrate")]
+        [DisplayName("Bitrate"), Required]
         public int BitRate { get; set; }
         
         public Mp3Settings.BitrateType BitRateType { get; set; }

@@ -5,6 +5,8 @@ using Nancy.ModelBinding;
 using Newtonsoft.Json;
 using OpenHomeServer.Server.Plugins.Ripper.Domain;
 using OpenHomeServer.Server.Storage;
+using System.Collections.Generic;
+using Nancy.Validation;
 
 namespace OpenHomeServer.Server.Plugins.Ripper
 {
@@ -43,8 +45,15 @@ namespace OpenHomeServer.Server.Plugins.Ripper
                 else
                 {
                     var currentSettings = persister.Get();
-                    this.BindTo(currentSettings);
-                    persister.Save(currentSettings);
+                    this.BindToAndValidate(currentSettings);
+                    if (this.ModelValidationResult.IsValid)
+                    {
+                        persister.Save(currentSettings);
+                    }
+                    else
+                    {
+                        return View["settings.cshtml", new RipperSettingsViewModel { Title = "Ripper Settings", Settings = currentSettings }];
+                    }
                 }
                 return new RedirectResponse("settings");
             };

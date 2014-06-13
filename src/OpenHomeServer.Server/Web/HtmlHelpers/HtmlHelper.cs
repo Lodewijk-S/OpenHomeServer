@@ -48,10 +48,11 @@ namespace OpenHomeServer.Server.Web.HtmlHelpers
         {
             var name = expression.GetTargetMemberInfo().Name;
             var value = expression.Compile().Invoke(helpers.Model);
+            var errors = helpers.RenderContext.Context.ModelValidationResult.Errors.Where(e => e.Key == name).Select(e => e.Value);
 
             var markup = string.Concat("<input type='textbox' class='form-control' name='", name, "' id='", name, "' value='", value,"' />");
-
-            return new NonEncodedHtmlString(markup);
+            
+            return new NonEncodedHtmlString(markup + string.Concat(errors));
         }
 
         public static IHtmlString LabelFor<T>(this HtmlHelpers<T> helpers, Expression<Func<T, object>> expression, string labelText = null)
