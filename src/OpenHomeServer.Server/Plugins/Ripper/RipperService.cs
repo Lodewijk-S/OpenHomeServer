@@ -28,7 +28,7 @@ namespace OpenHomeServer.Server.Plugins.Ripper
             _notificator = notificator;
             _settings = settings;
             _logger = logger;
-            _tagSource = new MusicBrainzTagSource(new MusicBrainzApi("http://musicbrainz.org"));
+            _tagSource = new MusicBrainzTagSource(new MusicBrainzApi("http://musicbrainz.org"), new CoverArtArchiveApi("http://coverartarchive.org"));
             _tracker = new StatusTracker();
 
             _tracker.OnStatusUpdated += s => _notificator.UpdateStatus(s);
@@ -146,11 +146,7 @@ namespace OpenHomeServer.Server.Plugins.Ripper
                         Bitrate = settings.BitRate,
                         Type = settings.BitRateType
                     },
-                    Output = new OutputLocation
-                    {
-                        BaseDirectory = settings.MusicCollectionRoot,
-                        FileNameMask = settings.FileNameMask
-                    }
+                    Output = new OutputLocationBuilder(settings.MusicCollectionRoot, settings.FileNameMask)
                 }))
                 {
                     reader.Progress += (read, bytes) =>
