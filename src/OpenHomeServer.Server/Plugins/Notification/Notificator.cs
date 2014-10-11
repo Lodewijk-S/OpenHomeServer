@@ -1,8 +1,7 @@
 ﻿using Microsoft.AspNet.SignalR;
-using Microsoft.AspNet.SignalR.Infrastructure;
 using OpenHomeServer.Server.Messaging;
 
-namespace OpenHomeServer.Server.Plugins.Notifications
+namespace OpenHomeServer.Server.Plugins.Notification
 {
     public class Notificator
     {

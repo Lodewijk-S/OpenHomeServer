@@ -2,7 +2,7 @@
 using Microsoft.AspNet.SignalR.Hubs;
 using Serilog;
 
-namespace OpenHomeServer.Server.Plugins.Notifications
+namespace OpenHomeServer.Server.Plugins.Notification
 {
     public class NotificationHub : Hub
     {
@@ -41,7 +41,7 @@ namespace OpenHomeServer.Server.Plugins.Notifications
 
     public static class MessagingHubExtensions
     {
-        public static void NotifyAll(this IHubConnectionContext clients, Notification notification)
+        public static void NotifyAll(this IHubConnectionContext<dynamic> clients, Notification notification)
         {
             clients.All.onRecieveNotification(notification);
         }

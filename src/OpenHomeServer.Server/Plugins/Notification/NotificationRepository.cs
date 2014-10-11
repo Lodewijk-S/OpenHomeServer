@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace OpenHomeServer.Server.Plugins.Notifications
+namespace OpenHomeServer.Server.Plugins.Notification
 {
     public class NotificationRepository
     {

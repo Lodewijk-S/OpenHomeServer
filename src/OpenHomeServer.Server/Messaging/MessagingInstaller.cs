@@ -3,7 +3,6 @@ using Castle.Facilities.TypedFactory;
 using Microsoft.AspNet.SignalR;
 using Microsoft.AspNet.SignalR.Infrastructure;
 using Microsoft.AspNet.SignalR.Hubs;
-using OpenHomeServer.Server.Plugins.Notifications;
 using System.Reflection;
 using Castle.MicroKernel;
 using System;

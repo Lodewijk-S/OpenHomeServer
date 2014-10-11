@@ -1,14 +1,18 @@
-﻿using Fixie.Conventions;
-using System;
-public class CustomConvention : Convention
-{
-    public CustomConvention()
-    {
-        Classes
-            .NameEndsWith("Tests");
+﻿using System;
+using Fixie;
 
-        HideExceptionDetails
-            .For<Exception>()
-            .For(typeof(Shouldly.ShouldBeStringTestExtensions));
-    }   
+namespace OpenHomeServer.Tests.Conventions
+{
+    public class CustomConvention : Convention
+    {
+        public CustomConvention()
+        {
+            Classes
+                .NameEndsWith("Tests");
+
+            HideExceptionDetails
+                .For<Exception>()
+                .For(typeof(Shouldly.ShouldBeStringTestExtensions));
+        }   
+    }
 }

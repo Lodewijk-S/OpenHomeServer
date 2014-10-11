@@ -1,6 +1,6 @@
 ﻿using Nancy;
 
-namespace OpenHomeServer.Server.Plugins.Notifications
+namespace OpenHomeServer.Server.Plugins.Notification
 {
     public class NotificationModule : NancyModule
     {

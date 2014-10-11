@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace OpenHomeServer.Server.Plugins.Notifications
+namespace OpenHomeServer.Server.Plugins.Notification
 {
     [Serializable]
     public class Notification
